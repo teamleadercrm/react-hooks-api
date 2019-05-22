@@ -1,0 +1,26 @@
+{
+  "name": "@teamleader/react-hooks-api",
+  "version": "0.0.1",
+  "description": "React hooks for the Teamleader API",
+  "main": "dist/cjs/main.js",
+  "module": "dist/es/main.js",
+  "browser": "dist/react-hooks-api.min.umd.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teamleadercrm/react-hooks-api.git"
+  },
+  "keywords": [
+    "react",
+    "react-hooks",
+    "teamleader",
+    "teamleader-api"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/teamleadercrm/react-hooks-api/issues"
+  },
+  "homepage": "https://github.com/teamleadercrm/react-hooks-api#readme"
+}
