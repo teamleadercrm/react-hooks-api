@@ -2,10 +2,12 @@
   "name": "@teamleader/react-hooks-api",
   "version": "0.0.1",
   "description": "React hooks for the Teamleader API",
-  "main": "dist/cjs/main.js",
-  "module": "dist/es/main.js",
-  "browser": "dist/react-hooks-api.min.umd.js",
+  "main": "./lib/bundle.cjs.js",
+  "module": "./lib/bundle.esm.js",
+  "typings": "./lib/main.d.ts",
   "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,5 +24,26 @@
   "bugs": {
     "url": "https://github.com/teamleadercrm/react-hooks-api/issues"
   },
-  "homepage": "https://github.com/teamleadercrm/react-hooks-api#readme"
+  "homepage": "https://github.com/teamleadercrm/react-hooks-api#readme",
+  "devDependencies": {
+    "@teamleader/api": "^3.4.0",
+    "@types/react": "^16.8.18",
+    "@types/react-redux": "^7.0.9",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.0.0",
+    "rollup": "^1.12.3",
+    "rollup-plugin-node-resolve": "^5.0.0",
+    "rollup-plugin-typescript2": "^0.21.1",
+    "typescript": "^3.4.5"
+  },
+  "peerDependencies": {
+    "@teamleader/api": "^3.4.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.0.0"
+  },
+  "files": [
+    "lib"
+  ]
 }
