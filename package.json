@@ -1,0 +1,60 @@
+{
+  "name": "@teamleader/react-hooks-api",
+  "version": "0.0.1",
+  "description": "React hooks for the Teamleader API",
+  "main": "./lib/bundle.cjs.js",
+  "module": "./lib/bundle.esm.js",
+  "typings": "./lib/main.d.ts",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "jest",
+    "lint": "tslint --project tsconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teamleadercrm/react-hooks-api.git"
+  },
+  "keywords": [
+    "react",
+    "react-hooks",
+    "teamleader",
+    "teamleader-api"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/teamleadercrm/react-hooks-api/issues"
+  },
+  "homepage": "https://github.com/teamleadercrm/react-hooks-api#readme",
+  "devDependencies": {
+    "@teamleader/api": "^3.4.0",
+    "@types/jest": "^24.0.13",
+    "@types/react": "^16.8.18",
+    "@types/react-redux": "^7.0.9",
+    "jest": "^24.8.0",
+    "prettier": "^1.17.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-hooks-testing-library": "^0.5.0",
+    "react-redux": "^7.0.0",
+    "react-test-renderer": "^16.8.6",
+    "redux": "^4.0.1",
+    "rollup": "^1.12.3",
+    "rollup-plugin-node-resolve": "^5.0.0",
+    "rollup-plugin-typescript2": "^0.21.1",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.16.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.4.5"
+  },
+  "peerDependencies": {
+    "@teamleader/api": "^3.4.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.0.0",
+    "redux": "^4.0.1"
+  },
+  "files": [
+    "lib"
+  ]
+}
