@@ -45,7 +45,9 @@
     "ts-jest": "^24.0.2",
     "tslint": "^5.16.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.4.5"
+    "typesafe-actions": "^4.4.0",
+    "typescript": "^3.4.5",
+    "utility-types": "^3.7.0"
   },
   "peerDependencies": {
     "@teamleader/api": "^3.4.0",
