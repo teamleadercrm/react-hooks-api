@@ -4,6 +4,7 @@ import { ReactReduxContext } from 'react-redux';
 import generateQueryCacheKey from '../utils//generateQueryCacheKey';
 import useUpdatableState from '../utils/useUpdatableState';
 
+import { cacheQueryResult } from '../store/actions';
 import Context from '../Context';
 
 const selectQueryData = (state, key) => {
@@ -41,7 +42,7 @@ const useQuery = (query, variables) => {
       // @TODO this promise should be cancellable
       API[domain][action](options)
         .then(data => {
-          store.dispatch({ type: 'CACHE_QUERY_RESULT', payload: { domain, action, options, data } });
+          store.dispatch(cacheQueryResult({ domain, action, options, data }));
 
           setState({
             loading: false,
