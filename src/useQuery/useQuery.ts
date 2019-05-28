@@ -8,7 +8,7 @@ import { cacheQueryResult } from '../store/actions';
 import Context from '../Context';
 
 const selectQueryData = (state, key) => {
-  return state.getIn(['queries', key]);
+  return state.queries[key];
 };
 
 const useQuery = (query, variables) => {
