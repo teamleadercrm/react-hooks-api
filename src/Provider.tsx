@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Provider as ReactReduxProvider } from 'react-redux';
 import { Store } from 'redux';
 
+import store from './store';
 import Context from './Context';
 
 type ProviderProps = {
@@ -9,11 +10,11 @@ type ProviderProps = {
   store: Store;
 };
 
-const Provider: React.FunctionComponent<ProviderProps> = ({ api, store, children }) => {
+const Provider: React.FunctionComponent<ProviderProps> = ({ api, children }) => {
   return (
-    <Context.Provider value={api}>
-      <ReactReduxProvider store={store}>{children}</ReactReduxProvider>
-    </Context.Provider>
+    <ReactReduxProvider store={store}>
+      <Context.Provider value={api}>{children}</Context.Provider>
+    </ReactReduxProvider>
   );
 };
 
