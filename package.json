@@ -10,7 +10,8 @@
     "dev": "rollup -c -w",
     "test": "jest",
     "test:watch": "jest --watch",
-    "lint": "tslint --project tsconfig.json"
+    "lint": "tslint --project tsconfig.json",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
