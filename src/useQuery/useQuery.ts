@@ -7,11 +7,19 @@ import { cacheQueryResult } from '../store/actions';
 import CustomReduxContext from '../store/CustomReduxContext';
 import Context from '../Context';
 
+type CalculatedQuery = {
+  domain: string;
+  action: string;
+  options?: any;
+};
+
+type Query = (variables?: any) => CalculatedQuery;
+
 const selectQueryData = (state, key) => {
   return state.queries[key];
 };
 
-const useQuery = (query, variables) => {
+const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
   const [state, setState] = useUpdatableState({
     loading: false,
     data: undefined,
