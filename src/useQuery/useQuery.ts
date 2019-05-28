@@ -1,7 +1,7 @@
 import { useEffect, useContext, useCallback } from 'react';
 import { ReactReduxContext } from 'react-redux';
 
-import generateQueryCacheKey from '../utils//generateQueryCacheKey';
+import generateQueryCacheKey from '../utils/generateQueryCacheKey';
 import useUpdatableState from '../utils/useUpdatableState';
 
 import { cacheQueryResult } from '../store/actions';
