@@ -1,10 +1,10 @@
 import { useEffect, useContext, useCallback } from 'react';
-import { ReactReduxContext } from 'react-redux';
 
 import generateQueryCacheKey from '../utils/generateQueryCacheKey';
 import useUpdatableState from '../utils/useUpdatableState';
 
 import { cacheQueryResult } from '../store/actions';
+import CustomReduxContext from '../store/CustomReduxContext';
 import Context from '../Context';
 
 const selectQueryData = (state, key) => {
@@ -23,7 +23,7 @@ const useQuery = (query, variables) => {
   // Get the redux store
   // this only works because our store is immutable and won't trigger
   // a re-render when it gets updated
-  const { store } = useContext(ReactReduxContext);
+  const { store } = useContext(CustomReduxContext);
 
   // Helper callback function that does the actual request
   const requestData = useCallback(

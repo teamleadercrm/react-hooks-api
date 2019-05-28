@@ -3,6 +3,7 @@ import { Provider as ReactReduxProvider } from 'react-redux';
 import { Store } from 'redux';
 
 import store from './store';
+import CustomReduxContext from './store/CustomReduxContext';
 import Context from './Context';
 
 type ProviderProps = {
@@ -12,7 +13,7 @@ type ProviderProps = {
 
 const Provider: React.FunctionComponent<ProviderProps> = ({ api, children }) => {
   return (
-    <ReactReduxProvider store={store}>
+    <ReactReduxProvider context={CustomReduxContext} store={store}>
       <Context.Provider value={api}>{children}</Context.Provider>
     </ReactReduxProvider>
   );
