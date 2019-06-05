@@ -75,13 +75,15 @@ export default Root;
 
 ### `useQuery`
 
-Signature: `(query: Query, variables: Variables) => QueryValues`
+Signature: `(query: Query, variables: Variables, options: Options) => QueryValues`
 
 [Query](#query)
 
 [Variables](#variables)
 
 [QueryValues](#queryvalues)
+
+[Options](#options)
 
 ### `Query`
 
@@ -97,4 +99,12 @@ The variables to be passed to the [Query](#query). When updated, it will re-run 
 loading: Boolean
 error?: Error
 data?: Response
+```
+
+### `Options`
+
+```js
+{
+  ignoreCache: boolean; // default: false
+}
 ```
