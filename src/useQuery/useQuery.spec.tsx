@@ -178,4 +178,27 @@ describe('useQuery', () => {
     expect(result.current.loading).toEqual(false);
     expect(result.current.data).toEqual(['data', 'more data']);
   });
+
+  it('should not dispatch a redux action when the ignore cache options is passed', async () => {
+    const QUERY = () => ({
+      domain: 'users',
+      action: 'list',
+    });
+
+    const store = configureStore([])({ queries: {} });
+
+    const { result, waitForNextUpdate, rerender, unmount } = renderHook(
+      () => useQuery(QUERY, {}, { ignoreCache: true }),
+      {
+        wrapper: StoreWrapper(store),
+      },
+    );
+
+    await waitForNextUpdate();
+
+    expect(store.getActions()).toEqual([]);
+
+    // @TODO we should probably also test the actual state here, but redux-mock-store is
+    // purely meant for testing actions
+  });
 });
