@@ -179,7 +179,7 @@ describe('useQuery', () => {
     expect(result.current.data).toEqual(['data', 'more data']);
   });
 
-  it('should not dispatch a redux action when the ignore cache options is passed', async () => {
+  it('should not dispatch a redux action when the ignore cache option is passed', async () => {
     const QUERY = () => ({
       domain: 'users',
       action: 'list',
