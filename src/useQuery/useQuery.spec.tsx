@@ -179,7 +179,7 @@ describe('useQuery', () => {
     expect(result.current.data).toEqual(['data', 'more data']);
   });
 
-  it('should ignore the store when the ignoreCache option is padded', async () => {
+  it('should ignore the store when the ignoreCache option is passed', async () => {
     const QUERY = () => ({
       domain: 'users',
       action: 'list',
