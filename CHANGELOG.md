@@ -1,3 +1,9 @@
+## [0.0.3] - 2019-05-28
+
+### Added
+
+- useQuery now accepts an optional third argument. For now, the only available option is `ignoreCache`. Which is set to false by default.
+
 ## [0.0.2] - 2019-05-28
 
 ### Fixed

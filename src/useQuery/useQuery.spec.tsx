@@ -178,4 +178,23 @@ describe('useQuery', () => {
     expect(result.current.loading).toEqual(false);
     expect(result.current.data).toEqual(['data', 'more data']);
   });
+
+  it('should ignore the store when the ignoreCache option is passed', async () => {
+    const QUERY = () => ({
+      domain: 'users',
+      action: 'list',
+    });
+
+    const storeKey = generateQueryCacheKey(QUERY());
+
+    const store = configureStore([])({ queries: { [storeKey]: 'cachedData' } });
+
+    const { result, waitForNextUpdate } = renderHook(() => useQuery(QUERY, {}, { ignoreCache: true }), {
+      wrapper: StoreWrapper(store),
+    });
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual('data');
+  });
 });

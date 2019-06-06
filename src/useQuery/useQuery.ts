@@ -15,11 +15,23 @@ type CalculatedQuery = {
 
 type Query = (variables?: any) => CalculatedQuery;
 
+type Options = {
+  ignoreCache: boolean;
+};
+
 const selectQueryData = (state, key) => {
   return state.queries[key];
 };
 
-const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
+const defaultConfig = {
+  ignoreCache: false,
+};
+
+const useQuery: (query: Query, variables?: any, options?: Options) => any = (
+  query,
+  variables,
+  { ignoreCache = defaultConfig.ignoreCache } = defaultConfig,
+) => {
   const [state, setState] = useUpdatableState({
     loading: false,
     data: undefined,
@@ -38,11 +50,13 @@ const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
     (domain, action, options, updateQuery) => {
       const key = generateQueryCacheKey({ domain, action, options });
 
-      // Check for previous results
-      const cacheResult = selectQueryData(store.getState(), key);
-      if (cacheResult) {
-        setState({ loading: false, data: cacheResult, error: undefined });
-        return;
+      if (!ignoreCache) {
+        // Check for previous results
+        const cacheResult = selectQueryData(store.getState(), key);
+        if (cacheResult) {
+          setState({ loading: false, data: cacheResult, error: undefined });
+          return;
+        }
       }
 
       setState({ loading: true, error: undefined });
