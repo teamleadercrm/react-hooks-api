@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Entities reducer sets an initial state 1`] = `Object {}`;
