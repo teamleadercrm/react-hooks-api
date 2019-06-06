@@ -64,9 +64,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
       // @TODO this promise should be cancellable
       API[domain][action](options)
         .then(data => {
-          if (!ignoreCache) {
-            store.dispatch(cacheQueryResult({ domain, action, options, data }));
-          }
+          store.dispatch(cacheQueryResult({ domain, action, options, data }));
 
           setState({
             loading: false,
