@@ -28,6 +28,9 @@
     "url": "https://github.com/teamleadercrm/react-hooks-api/issues"
   },
   "homepage": "https://github.com/teamleadercrm/react-hooks-api#readme",
+  "dependencies": {
+    "immer": "^3.1.2"
+  },
   "devDependencies": {
     "@teamleader/api": "^3.4.0",
     "@types/jest": "^24.0.13",

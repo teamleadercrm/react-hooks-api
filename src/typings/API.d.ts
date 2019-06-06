@@ -1,7 +1,11 @@
+export interface Entity {
+  id: string;
+}
+
 export type Response = {
-  data: object | [];
+  data: Entity | Entity[];
   included?: {
-    [key: string]: [];
+    [key: string]: Entity[];
   };
   meta?: {
     matches: number;
