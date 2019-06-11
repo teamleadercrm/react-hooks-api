@@ -9,6 +9,7 @@ import { queryRequest, querySuccess, queryFailure } from '../store/queries/actio
 import CustomReduxContext from '../store/CustomReduxContext';
 import Context from '../Context';
 import { saveNormalizedEntities } from '../store/entities/actions';
+import { selectMergedEntities } from '../store/entities/selectors';
 
 type CalculatedQuery = {
   domain: string;
@@ -72,9 +73,11 @@ const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
             });
           }
 
+          const mergedEntities = selectMergedEntities(store.getState(), { key });
+
           setState({
             loading: false,
-            data: updateQuery ? updateQuery({ previousData: state.data, data }) : data,
+            data: updateQuery ? updateQuery({ previousData: state.data, data: mergedEntities }) : mergedEntities,
           });
         })
         .catch(error => {
