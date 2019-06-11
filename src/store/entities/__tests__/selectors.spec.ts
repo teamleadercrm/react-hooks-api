@@ -1,6 +1,6 @@
 import generateQueryCacheKey from '../../../utils/generateQueryCacheKey';
 
-import { selectMergedEntities } from '../selectors';
+import { selectMergedEntities, mergeEntitiesIntoPaths } from '../selectors';
 
 describe('Entities selectors', () => {
   const keys = {
@@ -145,6 +145,44 @@ describe('Entities selectors', () => {
       ];
 
       expect(selectedEntities).toEqual(resultEntities);
+    });
+  });
+
+  describe('mergeEntitiesIntoPaths', () => {
+    it('correctly selects the right entities from an entities state object and merges it into an existing entity', () => {
+      const entitiesState = {
+        contacts: {
+          '708c8008-3455-49a9-b66a-5222bcadb0cc': {
+            id: '708c8008-3455-49a9-b66a-5222bcadb0cc',
+            name: 'John Appleseed',
+          },
+        },
+      };
+
+      const mainEntity = {
+        id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
+        participant: {
+          anotherKey: {
+            id: '708c8008-3455-49a9-b66a-5222bcadb0cc',
+            type: 'contact',
+          },
+        },
+      };
+
+      const paths = ['participant.anotherKey'];
+
+      const result = {
+        id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
+        participant: {
+          anotherKey: {
+            id: '708c8008-3455-49a9-b66a-5222bcadb0cc',
+            type: 'contact',
+            name: 'John Appleseed',
+          },
+        },
+      };
+
+      expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(result);
     });
   });
 });
