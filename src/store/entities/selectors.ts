@@ -6,17 +6,7 @@ import decodeQueryCacheKey from '../../utils/decodeQueryCacheKey';
 import { State } from '../reducer';
 import { State as EntitiesState } from '../entities/reducer';
 import { Entity } from '../../typings/API';
-
-/**
- * @TODO
- * Helper function to determine how to convert an api entity reference; f.e.
- * { type: 'contact', id: 'test123' }
- * into the domain type "contacts", should this be revised in the api or should we
- * change our store to store directly by type, or create a mapping?
- */
-export const convertAPIEntityTypeToDomain = (type: string) => {
-  return `${type}s`;
-};
+import { TYPE_DOMAIN_MAPPING } from './constants';
 
 /**
  * Helper function to merge entities into their respective paths
@@ -28,7 +18,7 @@ export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[],
   paths.forEach(path => {
     const sideloadReference = get(entity, path);
 
-    const sideloadedEntity = entities[convertAPIEntityTypeToDomain(sideloadReference.type)][sideloadReference.id];
+    const sideloadedEntity = entities[TYPE_DOMAIN_MAPPING[sideloadReference.type]][sideloadReference.id];
 
     set(clonedEntity, path, { ...sideloadReference, ...sideloadedEntity });
   });
