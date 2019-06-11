@@ -2,8 +2,9 @@ import { useEffect, useContext, useCallback } from 'react';
 
 import generateQueryCacheKey from '../utils/generateQueryCacheKey';
 import useUpdatableState from '../utils/useUpdatableState';
+import { Response } from '../typings/API';
 
-import { cacheQueryResult } from '../store/actions';
+import { queryRequest, querySuccess, queryFailure } from '../store/queries/actions';
 import CustomReduxContext from '../store/CustomReduxContext';
 import Context from '../Context';
 
@@ -45,19 +46,29 @@ const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
         return;
       }
 
+      store.dispatch(queryRequest({ key }));
       setState({ loading: true, error: undefined });
 
       // @TODO this promise should be cancellable
       API[domain][action](options)
-        .then(data => {
-          store.dispatch(cacheQueryResult({ domain, action, options, data }));
+        .then((response: Response) => {
+          store.dispatch(
+            querySuccess({
+              key,
+              ids: Array.isArray(response.data) ? response.data.map(entity => entity.id) : [response.data.id],
+              meta: response.meta,
+            }),
+          );
 
           setState({
             loading: false,
             data: updateQuery ? updateQuery({ previousData: state.data, data }) : data,
           });
         })
-        .catch(error => setState({ loading: false, error }));
+        .catch(error => {
+          store.dispatch(queryFailure({ key, error }));
+          setState({ loading: false, error });
+        });
     },
     [state.data],
   );
