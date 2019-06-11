@@ -20,10 +20,6 @@ type CalculatedQuery = {
 
 type Query = (variables?: any) => CalculatedQuery;
 
-const selectQueryData = (state, key) => {
-  return state.queries[key];
-};
-
 const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
   const [state, setState] = useUpdatableState({
     loading: false,
