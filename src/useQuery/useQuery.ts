@@ -10,6 +10,7 @@ import CustomReduxContext from '../store/CustomReduxContext';
 import Context from '../Context';
 import { saveNormalizedEntities } from '../store/entities/actions';
 import { selectMergedEntities } from '../store/entities/selectors';
+import { selectQuery, selectMetaFromQuery } from '../store/queries/selectors';
 
 type CalculatedQuery = {
   domain: string;
@@ -28,6 +29,7 @@ const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
     loading: false,
     data: undefined,
     error: undefined,
+    meta: undefined,
   });
 
   const API = useContext(Context);
@@ -43,9 +45,11 @@ const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
       const key = generateQueryCacheKey({ domain, action, options });
 
       // Check for previous results
-      const cacheResult = selectQueryData(store.getState(), key);
+      const cacheResult = selectQuery(store.getState(), key);
       if (cacheResult) {
-        setState({ loading: false, data: cacheResult, error: undefined });
+        const mergedEntities = selectMergedEntities(store.getState(), { key });
+        const meta = selectMetaFromQuery(store.getState(), key);
+        setState({ loading: false, data: mergedEntities, meta, error: undefined });
         return;
       }
 
@@ -74,10 +78,13 @@ const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
           }
 
           const mergedEntities = selectMergedEntities(store.getState(), { key });
+          const meta = selectMetaFromQuery(store.getState(), key);
 
           setState({
             loading: false,
             data: updateQuery ? updateQuery({ previousData: state.data, data: mergedEntities }) : mergedEntities,
+            meta,
+            error: undefined,
           });
         })
         .catch(error => {
