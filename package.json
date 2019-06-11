@@ -29,7 +29,9 @@
   },
   "homepage": "https://github.com/teamleadercrm/react-hooks-api#readme",
   "dependencies": {
-    "immer": "^3.1.2"
+    "immer": "^3.1.2",
+    "lodash.get": "^4.4.2",
+    "lodash.set": "^4.3.2"
   },
   "devDependencies": {
     "@teamleader/api": "^3.4.0",
