@@ -11,23 +11,23 @@ export default {
     {
       exports: 'named',
       file: packageJSON.main,
-      format: 'cjs'
+      format: 'cjs',
     },
     {
       file: packageJSON.module,
-      format: 'esm'
+      format: 'esm',
     },
   ],
   plugins: [
     typescriptPlugin({ typescript }),
     resolve({
       customResolveOptions: {
-        moduleDirectory: 'node_modules'
-      }
+        moduleDirectory: 'node_modules',
+      },
     }),
     commonjs({
       include: ['node_modules/lodash.get/index.js', 'node_modules/lodash.set/index.js'],
     }),
   ],
-  external: ['react', 'react-dom', 'react-redux', '@teamleader/api']
-}
+  external: ['react', 'react-dom', 'react-redux', '@teamleader/api'],
+};
