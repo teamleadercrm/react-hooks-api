@@ -2,11 +2,13 @@ import { useEffect, useContext, useCallback } from 'react';
 
 import generateQueryCacheKey from '../utils/generateQueryCacheKey';
 import useUpdatableState from '../utils/useUpdatableState';
+import normalize from '../utils/normalize';
 import { Response } from '../typings/API';
 
 import { queryRequest, querySuccess, queryFailure } from '../store/queries/actions';
 import CustomReduxContext from '../store/CustomReduxContext';
 import Context from '../Context';
+import { saveNormalizedEntities } from '../store/entities/actions';
 
 type CalculatedQuery = {
   domain: string;
@@ -59,6 +61,16 @@ const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
               meta: response.meta,
             }),
           );
+
+          const mainEntities = normalize(response.data);
+          store.dispatch(saveNormalizedEntities({ type: domain, entities: mainEntities }));
+
+          if (response.included) {
+            Object.keys(response.included).forEach(entityType => {
+              const normalizedEntities = normalize(response.included[entityType]);
+              store.dispatch(saveNormalizedEntities({ type: entityType, entities: normalizedEntities }));
+            });
+          }
 
           setState({
             loading: false,
