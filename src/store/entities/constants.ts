@@ -24,5 +24,5 @@ export const TYPE_DOMAIN_MAPPING = {
   customFieldDefinition: 'customFieldDefinitions',
   workType: 'workTypes',
   task: 'tasks',
-  todo: 'tasks.list', // Deprecated, `task` should be used instead
+  todo: 'tasks', // Deprecated, `task` should be used instead
 };
