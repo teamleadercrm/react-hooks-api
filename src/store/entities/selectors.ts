@@ -1,3 +1,4 @@
+import produce from 'immer';
 import set from 'lodash.set';
 import get from 'lodash.get';
 
@@ -13,17 +14,15 @@ import { TYPE_DOMAIN_MAPPING } from './constants';
  * Returns a new, non-mutated entity object
  */
 export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[], entity: Entity) => {
-  const clonedEntity = { ...entity };
+  return produce(entity, draftEntity => {
+    paths.forEach(path => {
+      const sideloadReference = get(entity, path);
 
-  paths.forEach(path => {
-    const sideloadReference = get(entity, path);
+      const sideloadedEntity = entities[TYPE_DOMAIN_MAPPING[sideloadReference.type]][sideloadReference.id];
 
-    const sideloadedEntity = entities[TYPE_DOMAIN_MAPPING[sideloadReference.type]][sideloadReference.id];
-
-    set(clonedEntity, path, { ...sideloadReference, ...sideloadedEntity });
-  });
-
-  return clonedEntity;
+      set(draftEntity, path, { ...sideloadReference, ...sideloadedEntity });
+    });
+  })
 };
 
 export const selectMergedEntities = (state: State, { key }: { key: string }) => {
