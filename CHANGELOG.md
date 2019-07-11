@@ -1,3 +1,9 @@
+## [0.0.4] - 2019-07-11
+
+### Other
+
+- Upgraded dependencies
+
 ## [0.0.3] - 2019-06-06
 
 ### Added
