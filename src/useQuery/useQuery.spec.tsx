@@ -1,7 +1,7 @@
 import React from 'react';
 import { Provider as ReactReduxProvider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { renderHook } from 'react-hooks-testing-library';
+import { renderHook } from '@testing-library/react-hooks';
 import { Store } from 'redux';
 
 import useQuery from './useQuery';
