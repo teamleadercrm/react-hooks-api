@@ -3,6 +3,7 @@ import { Provider as ReactReduxProvider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { renderHook } from '@testing-library/react-hooks';
 import { Store } from 'redux';
+import { act } from 'react-test-renderer';
 
 import useQuery from './useQuery';
 import generateQueryCacheKey from '../utils/generateQueryCacheKey';
@@ -46,7 +47,7 @@ const StoreWrapper = (passedStore?: Store) => {
 };
 
 describe('useQuery', () => {
-  it('should initially return a loading state and a fetchMore function', () => {
+  it('should initially return a loading state and a fetchMore function', async () => {
     const QUERY = () => ({
       domain: 'users',
       action: 'list',
@@ -73,7 +74,9 @@ describe('useQuery', () => {
     const { waitForNextUpdate } = renderHook(() => useQuery(QUERY), { wrapper: StoreWrapper(store) });
 
     // wait for request to resolve
-    await waitForNextUpdate();
+    await act(async () => {
+      await waitForNextUpdate();
+    });
 
     const expectedType = CACHE_QUERY_RESULT;
     const expectedPayload = {
@@ -93,7 +96,9 @@ describe('useQuery', () => {
 
     const { result, waitForNextUpdate } = renderHook(() => useQuery(QUERY), { wrapper: StoreWrapper() });
 
-    await waitForNextUpdate();
+    await act(async () => {
+      await waitForNextUpdate();
+    });
 
     expect(result.current.loading).toEqual(false);
     expect(result.current.data).toEqual('data');
@@ -107,7 +112,9 @@ describe('useQuery', () => {
 
     const { result, waitForNextUpdate } = renderHook(() => useQuery(QUERY), { wrapper: StoreWrapper() });
 
-    await waitForNextUpdate();
+    await act(async () => {
+      await waitForNextUpdate();
+    });
 
     expect(result.current.loading).toEqual(false);
     expect(result.current.error).toEqual(new Error('API-Error'));
@@ -145,9 +152,13 @@ describe('useQuery', () => {
       initialProps: { query: FAIL_QUERY },
     });
 
-    await waitForNextUpdate();
+    await act(async () => {
+      await waitForNextUpdate();
+    });
 
-    rerender({ query: SUCCESS_QUERY });
+    act(() => {
+      rerender({ query: SUCCESS_QUERY });
+    });
 
     expect(result.current.loading).toEqual(true);
     expect(result.current.error).toBeUndefined();
@@ -164,16 +175,22 @@ describe('useQuery', () => {
 
     const { result, waitForNextUpdate } = renderHook(() => useQuery(QUERY, { page: 1 }), { wrapper: StoreWrapper() });
 
-    await waitForNextUpdate();
+    await act(async () => {
+      await waitForNextUpdate();
+    });
 
-    result.current.fetchMore({
-      variables: { page: 2 },
-      updateQuery: ({ previousData, data }) => [previousData, data],
+    act(() => {
+      result.current.fetchMore({
+        variables: { page: 2 },
+        updateQuery: ({ previousData, data }) => [previousData, data],
+      });
     });
 
     expect(result.current.loading).toBeTruthy();
 
-    await waitForNextUpdate();
+    await act(async () => {
+      await waitForNextUpdate();
+    });
 
     expect(result.current.loading).toEqual(false);
     expect(result.current.data).toEqual(['data', 'more data']);
@@ -193,7 +210,9 @@ describe('useQuery', () => {
       wrapper: StoreWrapper(store),
     });
 
-    await waitForNextUpdate();
+    await act(async () => {
+      await waitForNextUpdate();
+    });
 
     expect(result.current.data).toEqual('data');
   });
