@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks';
+import { act } from 'react-test-renderer';
 
 import useUpdatableState from './useUpdatableState';
 
@@ -19,7 +20,9 @@ describe('useUpdatableState', () => {
 
     const [, setState] = result.current;
 
-    setState({ loading: false });
+    act(() => {
+      setState({ loading: false });
+    });
 
     const [newState] = result.current;
 
