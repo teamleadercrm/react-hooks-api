@@ -74,9 +74,7 @@ describe('useQuery', () => {
     const { waitForNextUpdate } = renderHook(() => useQuery(QUERY), { wrapper: StoreWrapper(store) });
 
     // wait for request to resolve
-    await act(async () => {
-      await waitForNextUpdate();
-    });
+    await waitForNextUpdate();
 
     const expectedType = CACHE_QUERY_RESULT;
     const expectedPayload = {
@@ -96,9 +94,7 @@ describe('useQuery', () => {
 
     const { result, waitForNextUpdate } = renderHook(() => useQuery(QUERY), { wrapper: StoreWrapper() });
 
-    await act(async () => {
-      await waitForNextUpdate();
-    });
+    await waitForNextUpdate();
 
     expect(result.current.loading).toEqual(false);
     expect(result.current.data).toEqual('data');
@@ -112,9 +108,7 @@ describe('useQuery', () => {
 
     const { result, waitForNextUpdate } = renderHook(() => useQuery(QUERY), { wrapper: StoreWrapper() });
 
-    await act(async () => {
-      await waitForNextUpdate();
-    });
+    await waitForNextUpdate();
 
     expect(result.current.loading).toEqual(false);
     expect(result.current.error).toEqual(new Error('API-Error'));
@@ -152,9 +146,8 @@ describe('useQuery', () => {
       initialProps: { query: FAIL_QUERY },
     });
 
-    await act(async () => {
-      await waitForNextUpdate();
-    });
+    await waitForNextUpdate();
+
 
     act(() => {
       rerender({ query: SUCCESS_QUERY });
@@ -175,9 +168,7 @@ describe('useQuery', () => {
 
     const { result, waitForNextUpdate } = renderHook(() => useQuery(QUERY, { page: 1 }), { wrapper: StoreWrapper() });
 
-    await act(async () => {
-      await waitForNextUpdate();
-    });
+    await waitForNextUpdate();
 
     act(() => {
       result.current.fetchMore({
@@ -188,9 +179,7 @@ describe('useQuery', () => {
 
     expect(result.current.loading).toBeTruthy();
 
-    await act(async () => {
-      await waitForNextUpdate();
-    });
+    await waitForNextUpdate();
 
     expect(result.current.loading).toEqual(false);
     expect(result.current.data).toEqual(['data', 'more data']);
@@ -210,9 +199,7 @@ describe('useQuery', () => {
       wrapper: StoreWrapper(store),
     });
 
-    await act(async () => {
-      await waitForNextUpdate();
-    });
+    await waitForNextUpdate();
 
     expect(result.current.data).toEqual('data');
   });
