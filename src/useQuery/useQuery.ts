@@ -58,7 +58,7 @@ const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
           store.dispatch(
             querySuccess({
               key,
-              ids: Array.isArray(response.data) ? response.data.map(entity => entity.id) : [response.data.id],
+              ids: Array.isArray(response.data) ? response.data.map(entity => entity.id) : response.data.id,
               meta: response.meta,
             }),
           );
