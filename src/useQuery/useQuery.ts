@@ -11,6 +11,7 @@ import Context from '../Context';
 import { saveNormalizedEntities } from '../store/entities/actions';
 import { selectMergedEntities } from '../store/entities/selectors';
 import { selectQuery, selectMetaFromQuery } from '../store/queries/selectors';
+import { TYPE_DOMAIN_MAPPING } from '../store/entities/constants';
 
 type CalculatedQuery = {
   domain: string;
@@ -69,7 +70,8 @@ const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
           if (response.included) {
             Object.keys(response.included).forEach(entityType => {
               const normalizedEntities = normalize(response.included[entityType]);
-              store.dispatch(saveNormalizedEntities({ type: entityType, entities: normalizedEntities }));
+              const domainFromType = TYPE_DOMAIN_MAPPING[entityType];
+              store.dispatch(saveNormalizedEntities({ type: domainFromType, entities: normalizedEntities }));
             });
           }
 
