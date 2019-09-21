@@ -1,8 +1,8 @@
-const convertPathToKeys = path => {
+const convertPathToKeys = (path: string) => {
   return path.split('.');
 };
 
-const resolveForCondition = condition => (object, keys) => {
+const resolveForCondition = (condition: (item: object | object[]) => boolean) => (object: object, keys: string[]) => {
   try {
     const item = object[keys[0]];
 
@@ -28,7 +28,7 @@ const resolveForCondition = condition => (object, keys) => {
   }
 };
 
-const isRelationship = item => {
+const isRelationship = (item: object) => {
   if (typeof item !== 'object') {
     return false;
   }
@@ -36,7 +36,7 @@ const isRelationship = item => {
   return item.hasOwnProperty('type') && item.hasOwnProperty('id');
 };
 
-const isListOfRelationships = (item) => {
+const isListOfRelationships = (item: object | object[]) => {
   if (!Array.isArray(item)) {
     return false;
   }
