@@ -9,6 +9,7 @@ export type State = DeepReadonly<{
     loading: boolean;
     error?: Error;
     ids?: string | string[];
+    data?: any,
     meta?: any;
   };
 }>;
@@ -31,6 +32,7 @@ const queries = produce((draft: Draft<State>, action: QueryAction) => {
         loading: false,
         error: undefined,
         ids: action.payload.ids,
+        data: action.payload.data,
         meta: action.payload.meta,
       };
       return;
