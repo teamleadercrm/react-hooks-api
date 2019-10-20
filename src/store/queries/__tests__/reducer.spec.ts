@@ -62,15 +62,17 @@ describe('Queries reducer', () => {
     const key = 'unique key';
     const ids = ['testid123'];
     const meta = { 'some meta key': 'some meta information' };
+    const data = { 'some data key': 'some data' }
 
     const RESULT_STATE = {
       'unique key': {
         loading: false,
         ids,
         meta,
+        data,
       },
     };
 
-    expect(reducer(INITIAL_STATE, querySuccess({ key, ids, meta }))).toEqual(RESULT_STATE);
+    expect(reducer(INITIAL_STATE, querySuccess({ key, ids, meta, data }))).toEqual(RESULT_STATE);
   });
 });
