@@ -44,7 +44,7 @@
     "redux-mock-store": "^1.5.3",
     "rollup": "^1.12.3",
     "rollup-plugin-node-resolve": "^5.0.0",
-    "rollup-plugin-typescript2": "^0.24.0",
+    "rollup-plugin-typescript2": "^0.25.1",
     "ts-jest": "^24.0.2",
     "tslint": "^5.16.0",
     "tslint-config-prettier": "^1.18.0",
