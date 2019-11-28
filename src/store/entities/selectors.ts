@@ -47,14 +47,14 @@ export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[],
 };
 
 export const selectMergedEntities = (state: State, { key }: { key: string }) => {
-  const { ids } = state.queries[key];
+  const { ids, data } = state.queries[key];
   const { domain, options } = decodeQueryCacheKey(key);
 
   const include = options && options.include;
 
   // single entity, aka .info request
-  if (typeof ids === 'string') {
-    const entity = state.entities[domain][ids];
+  if ((data && !Array.isArray(data)) || typeof ids === 'string') {
+    const entity = data || state.entities[domain][ids as string];
 
     if (include) {
       const entityPaths = include.split(',');
@@ -65,7 +65,7 @@ export const selectMergedEntities = (state: State, { key }: { key: string }) => 
     return entity;
   }
 
-  const entities = ids.map(id => state.entities[domain][id]);
+  const entities = data || ids.map(id => state.entities[domain][id]);
 
   if (include) {
     const entityPaths = include.split(',');
