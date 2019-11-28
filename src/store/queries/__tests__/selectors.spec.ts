@@ -1,4 +1,4 @@
-import { selectQuery, selectMetaFromQuery, selectDataFromQuery } from '../selectors';
+import { selectQuery, selectMetaFromQuery } from '../selectors';
 
 describe('queries selectors', () => {
   const INITIAL_STATE = {
@@ -31,10 +31,4 @@ describe('queries selectors', () => {
 
     expect(meta).toEqual({ matches: 2 });
   });
-
-  it('selects the data of the query', () => {
-    const data = selectDataFromQuery(INITIAL_STATE, 'uniqueKey');
-
-    expect(data).toEqual({ groupedBy: 'participant' })
-  })
 });

@@ -8,6 +8,3 @@ export const selectMetaFromQuery = (state: State, key: string) => {
   return selectQuery(state, key).meta;
 };
 
-export const selectDataFromQuery = (state: State, key: string) => {
-  return selectQuery(state, key).data;
-}

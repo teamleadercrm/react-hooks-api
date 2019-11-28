@@ -10,7 +10,7 @@ import CustomReduxContext from '../store/CustomReduxContext';
 import Context from '../Context';
 import { saveNormalizedEntities } from '../store/entities/actions';
 import { selectMergedEntities } from '../store/entities/selectors';
-import { selectQuery, selectMetaFromQuery, selectDataFromQuery } from '../store/queries/selectors';
+import { selectQuery, selectMetaFromQuery } from '../store/queries/selectors';
 import { TYPE_DOMAIN_MAPPING } from '../store/entities/constants';
 
 type CalculatedQuery = {
@@ -58,13 +58,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
         // Check for previous results
         const cacheResult = selectQuery(store.getState(), key);
         if (cacheResult) {
-          let data;
-          if (isEntityAction) {
-            data = selectMergedEntities(store.getState(), { key });
-          } else {
-            data = selectDataFromQuery(store.getState(), key);
-          }
-
+          const data = selectMergedEntities(store.getState(), { key });
           const meta = selectMetaFromQuery(store.getState(), key);
 
           setState({ loading: false, data, meta, error: undefined });
@@ -100,13 +94,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
             });
           }
 
-          let data;
-          if (isEntityAction) {
-            data = selectMergedEntities(store.getState(), { key });
-          } else {
-            data = selectDataFromQuery(store.getState(), key);
-          }
-
+          const data = selectMergedEntities(store.getState(), { key });
           const meta = selectMetaFromQuery(store.getState(), key);
 
           setState({
