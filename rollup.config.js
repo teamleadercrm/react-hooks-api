@@ -26,7 +26,7 @@ export default {
       },
     }),
     commonjs({
-      include: ['node_modules/lodash.set/index.js'],
+      include: ['node_modules/lodash.set/index.js', 'node_modules/lodash.camelCase/index.js'],
     }),
   ],
   external: ['react', 'react-dom', 'react-redux', '@teamleader/api'],
