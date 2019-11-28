@@ -33,6 +33,26 @@ const mockAPI = {
       });
     },
   },
+  projectItems: {
+    report: () => {
+      return new Promise((resolve) => {
+        resolve(
+          {
+            data: [
+              {
+                billable_amount: { "amount": 63.05, "currency": "EUR" },
+                cost: { "amount": 100, "currency": "EUR" },
+                result: { "amount": -36.95, "currency": "EUR" },
+                type: "tracked_time",
+                quantity: 1,
+                unit: "hour"
+              }
+            ]
+          }
+        )
+      })
+    }
+  }
 };
 
 const initialMockState: State = {
@@ -176,6 +196,54 @@ describe('useQuery', () => {
       },
     ]);
   });
+
+  it('should save the data on a query level when the action is not "info" or "list"', async () => {
+    const QUERY = () => ({
+      domain: 'projectItems',
+      action: 'report'
+    });
+
+    const key = generateQueryCacheKey(QUERY());
+
+    let state = { ...initialMockState };
+    const store = configureStore([])(() => state);
+
+    const data = [{
+      billable_amount: { "amount": 63.05, "currency": "EUR" },
+      cost: { "amount": 100, "currency": "EUR" },
+      result: { "amount": -36.95, "currency": "EUR" },
+      type: "tracked_time",
+      quantity: 1,
+      unit: "hour"
+    }];
+
+    const { waitForNextUpdate } = renderHook(() => useQuery(QUERY), { wrapper: StoreWrapper(store) });
+
+    state = {
+      entities: {},
+      queries: {
+        [key]: {
+          loading: false,
+          data,
+        }
+      }
+    };
+
+    await waitForNextUpdate();
+
+    const actions = [
+      querySuccess({
+        key,
+        data
+      }),
+    ];
+
+    const allActions = store.getActions();
+    // skip first request action
+    allActions.shift();
+
+    expect(allActions).toEqual(actions);
+  })
 
   it('should return the error if the API request fails', async () => {
     const QUERY = () => ({
