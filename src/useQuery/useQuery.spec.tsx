@@ -1,8 +1,9 @@
 import React from 'react';
 import { Provider as ReactReduxProvider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { renderHook } from 'react-hooks-testing-library';
+import { renderHook } from '@testing-library/react-hooks';
 import { Store } from 'redux';
+import { act } from 'react-test-renderer';
 
 import useQuery from './useQuery';
 import generateQueryCacheKey from '../utils/generateQueryCacheKey';
@@ -32,6 +33,9 @@ const mockAPI = {
         reject(error);
       });
     },
+  },
+  projects: {
+    list: jest.fn()
   },
   projectItems: {
     report: () => {
@@ -94,7 +98,7 @@ const StoreWrapper = (passedStore?: Store) => {
 };
 
 describe('useQuery', () => {
-  it('should initially return a loading state and a fetchMore function', () => {
+  it('should initially return a loading state and a fetchMore function', async () => {
     const QUERY = () => ({
       domain: 'users',
       action: 'list',
@@ -298,7 +302,10 @@ describe('useQuery', () => {
 
     await waitForNextUpdate();
 
-    rerender({ query: SUCCESS_QUERY });
+
+    act(() => {
+      rerender({ query: SUCCESS_QUERY });
+    });
 
     expect(result.current.loading).toEqual(true);
     expect(result.current.error).toBeUndefined();
@@ -331,9 +338,11 @@ describe('useQuery', () => {
     };
     await waitForNextUpdate();
 
-    result.current.fetchMore({
-      variables: { page: 2 },
-      updateQuery: ({ previousData, data }) => [...previousData, ...data],
+    act(() => {
+      result.current.fetchMore({
+        variables: { page: 2 },
+        updateQuery: ({ previousData, data }) => [...previousData, ...data],
+      });
     });
 
     expect(result.current.loading).toBeTruthy();
@@ -369,5 +378,43 @@ describe('useQuery', () => {
 
     expect(result.current.loading).toEqual(false);
     expect(result.current.data).toEqual(resultData);
+  });
+
+  it('should ignore the store when the ignoreCache option is passed', async () => {
+    const QUERY = () => ({
+      domain: 'projects',
+      action: 'list',
+    });
+
+    const storeKey = generateQueryCacheKey(QUERY());
+
+    const store = configureStore([])({
+      entities: {
+        projects: {
+          'e57a6047-cb52-4273-9df7-1d55c2c6e36d': {
+            'key': 'cached'
+          }
+        }
+      },
+      queries: {
+        [storeKey]: {
+          ids: ['e57a6047-cb52-4273-9df7-1d55c2c6e36d']
+        }
+      }
+    });
+
+    mockAPI.projects.list.mockReturnValueOnce(new Promise((resolve) => {
+      resolve({
+        data: []
+      })
+    }));
+
+    const { result, waitForNextUpdate } = renderHook(() => useQuery(QUERY, {}, { ignoreCache: true }), {
+      wrapper: StoreWrapper(store),
+    });
+
+    await waitForNextUpdate();
+
+    expect(mockAPI.projects.list).toHaveBeenCalled();
   });
 });

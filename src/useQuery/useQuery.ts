@@ -21,7 +21,19 @@ type CalculatedQuery = {
 
 type Query = (variables?: any) => CalculatedQuery;
 
-const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
+type Options = {
+  ignoreCache: boolean;
+};
+
+const defaultConfig = {
+  ignoreCache: false,
+};
+
+const useQuery: (query: Query, variables?: any, options?: Options) => any = (
+  query,
+  variables,
+  { ignoreCache = defaultConfig.ignoreCache } = defaultConfig,
+) => {
   const [state, setState] = useUpdatableState({
     loading: false,
     data: undefined,
@@ -42,20 +54,22 @@ const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
       const key = generateQueryCacheKey({ domain, action, options });
       const isEntityAction = action === 'info' || action === 'list';
 
-      // Check for previous results
-      const cacheResult = selectQuery(store.getState(), key);
-      if (cacheResult) {
-        let data;
-        if (isEntityAction) {
-          data = selectMergedEntities(store.getState(), { key });
-        } else {
-          data = selectDataFromQuery(store.getState(), key);
+      if (!ignoreCache) {
+        // Check for previous results
+        const cacheResult = selectQuery(store.getState(), key);
+        if (cacheResult) {
+          let data;
+          if (isEntityAction) {
+            data = selectMergedEntities(store.getState(), { key });
+          } else {
+            data = selectDataFromQuery(store.getState(), key);
+          }
+
+          const meta = selectMetaFromQuery(store.getState(), key);
+
+          setState({ loading: false, data, meta, error: undefined });
+          return;
         }
-
-        const meta = selectMetaFromQuery(store.getState(), key);
-
-        setState({ loading: false, data, meta, error: undefined });
-        return;
       }
 
       store.dispatch(queryRequest({ key }));
