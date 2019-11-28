@@ -10,7 +10,7 @@ import CustomReduxContext from '../store/CustomReduxContext';
 import Context from '../Context';
 import { saveNormalizedEntities } from '../store/entities/actions';
 import { selectMergedEntities } from '../store/entities/selectors';
-import { selectQuery, selectMetaFromQuery } from '../store/queries/selectors';
+import { selectQuery, selectMetaFromQuery, selectDataFromQuery } from '../store/queries/selectors';
 import { TYPE_DOMAIN_MAPPING } from '../store/entities/constants';
 
 type CalculatedQuery = {
@@ -40,13 +40,21 @@ const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
   const requestData = useCallback(
     (domain, action, options, updateQuery) => {
       const key = generateQueryCacheKey({ domain, action, options });
+      const isEntityAction = action === 'info' || action === 'list';
 
       // Check for previous results
       const cacheResult = selectQuery(store.getState(), key);
       if (cacheResult) {
-        const mergedEntities = selectMergedEntities(store.getState(), { key });
+        let data;
+        if (isEntityAction) {
+          data = selectMergedEntities(store.getState(), { key });
+        } else {
+          data = selectDataFromQuery(store.getState(), key);
+        }
+
         const meta = selectMetaFromQuery(store.getState(), key);
-        setState({ loading: false, data: mergedEntities, meta, error: undefined });
+
+        setState({ loading: false, data, meta, error: undefined });
         return;
       }
 
@@ -59,13 +67,16 @@ const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
           store.dispatch(
             querySuccess({
               key,
-              ids: Array.isArray(response.data) ? response.data.map(entity => entity.id) : response.data.id,
+              ...(isEntityAction && { ids: Array.isArray(response.data) ? response.data.map(entity => entity.id) : response.data.id }),
+              ...(!isEntityAction && { data: response.data }),
               meta: response.meta,
             }),
           );
 
-          const mainEntities = normalize(response.data);
-          store.dispatch(saveNormalizedEntities({ type: domain, entities: mainEntities }));
+          if (isEntityAction) {
+            const mainEntities = normalize(response.data);
+            store.dispatch(saveNormalizedEntities({ type: domain, entities: mainEntities }));
+          }
 
           if (response.included) {
             Object.keys(response.included).forEach(entityType => {
@@ -75,12 +86,18 @@ const useQuery: (query: Query, variables?: any) => any = (query, variables) => {
             });
           }
 
-          const mergedEntities = selectMergedEntities(store.getState(), { key });
+          let data;
+          if (isEntityAction) {
+            data = selectMergedEntities(store.getState(), { key });
+          } else {
+            data = selectDataFromQuery(store.getState(), key);
+          }
+
           const meta = selectMetaFromQuery(store.getState(), key);
 
           setState({
             loading: false,
-            data: updateQuery ? updateQuery({ previousData: state.data, data: mergedEntities }) : mergedEntities,
+            data: updateQuery ? updateQuery({ previousData: state.data, data }) : data,
             meta,
             error: undefined,
           });
