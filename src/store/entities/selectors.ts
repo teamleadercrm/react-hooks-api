@@ -1,5 +1,6 @@
 import produce from 'immer';
 import set from 'lodash.set';
+import camelCase from 'lodash.camelCase';
 
 import decodeQueryCacheKey from '../../utils/decodeQueryCacheKey';
 
@@ -16,7 +17,7 @@ import resolveReferences, { convertPathToKeys } from '../../utils/referenceResol
 export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[], entity: Entity) => {
   return produce(entity, draftEntity => {
     paths.forEach(path => {
-      const keys = convertPathToKeys(path);
+      const keys = convertPathToKeys(path).map(camelCase);
       const sideloadReference = resolveReferences(entity, keys);
 
       if (sideloadReference === null) {
@@ -41,7 +42,7 @@ export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[],
 
       sideloadedEntity = entities[TYPE_DOMAIN_MAPPING[sideloadReference.type]][sideloadReference.id];
 
-      set(draftEntity, path, { ...sideloadReference, ...sideloadedEntity });
+      set(draftEntity, path.split('.').map(camelCase).join('.'), { ...sideloadReference, ...sideloadedEntity });
     });
   })
 };
