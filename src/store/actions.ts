@@ -1,4 +1,4 @@
-import { createStandardAction, ActionType } from 'typesafe-actions';
+import { createAction, ActionType } from 'typesafe-actions';
 
 import { Response } from '../typings/API';
 import { CACHE_QUERY_RESULT } from './constants';
@@ -13,4 +13,4 @@ type Payload = {
   data: Response;
 };
 
-export const cacheQueryResult = createStandardAction(CACHE_QUERY_RESULT)<Payload>();
+export const cacheQueryResult = createAction(CACHE_QUERY_RESULT)<Payload>();

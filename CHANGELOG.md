@@ -1,3 +1,20 @@
+## Unreleased
+
+### 💥Breaking changes
+
+- Sideloaded data is now automatically merged into the entity it belongs to. This means the signature of the object returned by useQuery has changed. See below or consult the README for more information.
+ ```ts
+type Object = {
+  // The entity or list of entities
+  // Can also be calculated data (see projectItems.report)
+  data: Entity || Array<Entity> || NonEntity;
+  // Metadata returned by the request
+  meta: any
+}
+
+const object: Object = useQuery(query);
+ ```
+
 ## [0.0.4] - 2019-07-11
 
 ### Other

@@ -1,28 +1,15 @@
+import { combineReducers } from 'redux';
 import { DeepReadonly } from 'utility-types';
-import { createReducer } from 'typesafe-actions';
 
-import { CACHE_QUERY_RESULT } from './constants';
-import generateQueryCacheKey from '../utils/generateQueryCacheKey';
-import { Response } from '../typings/API';
-
-import { RootAction } from './actions';
+import queries, { State as QueriesState } from './queries/reducer';
+import entities, { State as EntitiesState } from './entities/reducer';
 
 export type State = DeepReadonly<{
-  queries: {
-    [key: string]: Response;
-  };
+  queries: QueriesState;
+  entities: EntitiesState;
 }>;
 
-const INITIAL_STATE: State = {
-  queries: {},
-};
-
-const queries = createReducer<State, RootAction>(INITIAL_STATE).handleAction(
-  CACHE_QUERY_RESULT,
-  (state, { payload }) => {
-    const key = generateQueryCacheKey({ domain: payload.domain, action: payload.action, options: payload.options });
-    return { ...state, queries: { ...state.queries, [key]: payload.data } };
-  },
-);
-
-export default queries;
+export default combineReducers({
+  queries,
+  entities,
+});

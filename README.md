@@ -95,10 +95,11 @@ The variables to be passed to the [Query](#query). When updated, it will re-run 
 
 ### `QueryValues`
 
-```
-loading: Boolean
-error?: Error
-data?: Response
+```ts
+loading: boolean;
+error?: Error;
+data?: Entity | Array<Entity> | Record<string, any>
+meta?: Record<string, any>
 ```
 
 ### `Options`
