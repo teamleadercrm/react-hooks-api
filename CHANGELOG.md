@@ -1,4 +1,4 @@
-## Unreleased
+## [0.1.0-rc1] - 2019-11-29
 
 ### 💥Breaking changes
 
