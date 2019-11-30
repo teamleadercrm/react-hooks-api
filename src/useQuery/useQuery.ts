@@ -1,4 +1,5 @@
 import { useEffect, useContext, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 
 import generateQueryCacheKey from '../utils/generateQueryCacheKey';
 import useUpdatableState from '../utils/useUpdatableState';
@@ -47,6 +48,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   // this only works because our store is immutable and won't trigger
   // a re-render when it gets updated
   const { store } = useContext(CustomReduxContext);
+  const dispatch = useDispatch();
 
   // Helper callback function that does the actual request
   const requestData = useCallback(
@@ -66,13 +68,13 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
         }
       }
 
-      store.dispatch(queryRequest({ key }));
+      dispatch(queryRequest({ key }));
       setState({ loading: true, error: undefined });
 
       // @TODO this promise should be cancellable
       API[domain][action](options)
         .then((response: Response) => {
-          store.dispatch(
+          dispatch(
             querySuccess({
               key,
               ...(isEntityAction && { ids: Array.isArray(response.data) ? response.data.map(entity => entity.id) : response.data.id }),
@@ -83,14 +85,14 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
 
           if (isEntityAction) {
             const mainEntities = normalize(response.data);
-            store.dispatch(saveNormalizedEntities({ type: domain, entities: mainEntities }));
+            dispatch(saveNormalizedEntities({ type: domain, entities: mainEntities }));
           }
 
           if (response.included) {
             Object.keys(response.included).forEach(entityType => {
               const normalizedEntities = normalize(response.included[entityType]);
               const domainFromType = TYPE_DOMAIN_MAPPING[entityType];
-              store.dispatch(saveNormalizedEntities({ type: domainFromType, entities: normalizedEntities }));
+              dispatch(saveNormalizedEntities({ type: domainFromType, entities: normalizedEntities }));
             });
           }
 
@@ -105,7 +107,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
           });
         })
         .catch(error => {
-          store.dispatch(queryFailure({ key, error }));
+          dispatch(queryFailure({ key, error }));
           setState({ loading: false, error });
         });
     },
