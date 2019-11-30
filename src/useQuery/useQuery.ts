@@ -1,5 +1,4 @@
 import { useEffect, useContext, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 
 import generateQueryCacheKey from '../utils/generateQueryCacheKey';
 import useUpdatableState from '../utils/useUpdatableState';
@@ -13,6 +12,7 @@ import { saveNormalizedEntities } from '../store/entities/actions';
 import { selectMergedEntities } from '../store/entities/selectors';
 import { selectQuery, selectMetaFromQuery } from '../store/queries/selectors';
 import { TYPE_DOMAIN_MAPPING } from '../store/entities/constants';
+import { useDispatch } from '../store/CustomReduxContext';
 
 type CalculatedQuery = {
   domain: string;
