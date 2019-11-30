@@ -13,12 +13,19 @@ export type EntitiesAction = ActionType<typeof actions>;
 
 const INITIAL_STATE: State = {};
 
-const queries = produce((draft: Draft<State>, action: EntitiesAction) => {
+const entities = produce((draft: Draft<State>, action: EntitiesAction) => {
   switch (action.type) {
     case getType(actions.saveNormalizedEntities):
-      draft[action.payload.type] = { ...draft[action.payload.type], ...action.payload.entities };
+      draft[action.payload.type] =
+        Object.keys(action.payload.entities).reduce((entitiesById, nextEntityId) => ({
+          ...entitiesById,
+          [nextEntityId]: {
+            ...(entitiesById[nextEntityId]),
+            ...action.payload.entities[nextEntityId],
+          }
+        }), draft[action.payload.type] || {});
       return;
   }
 }, INITIAL_STATE);
 
-export default queries;
+export default entities;
