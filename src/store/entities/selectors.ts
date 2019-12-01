@@ -9,6 +9,7 @@ import { State as EntitiesState } from '../entities/reducer';
 import { Entity } from '../../typings/API';
 import { TYPE_DOMAIN_MAPPING } from './constants';
 import resolveReferences, { convertPathToKeys } from '../../utils/referenceResolver';
+import { selectQueryWithKey } from '../queries/selectors';
 
 /**
  * Helper function to merge entities into their respective paths
@@ -48,7 +49,13 @@ export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[],
 };
 
 export const selectMergedEntities = (key: string) => (state: State) => {
-  const { ids, data } = state.queries[key];
+  const query = selectQueryWithKey(key)(state);
+  // The query hasn't finished running yet
+  if (!query || (!query.ids && !query.data)) {
+    return null;
+  }
+
+  const { ids, data } = query;
   const { domain, options } = decodeQueryCacheKey(key);
 
   const include = options && options.include;
