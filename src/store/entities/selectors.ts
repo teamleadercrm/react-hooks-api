@@ -47,7 +47,7 @@ export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[],
   })
 };
 
-export const selectMergedEntities = (state: State, { key }: { key: string }) => {
+export const selectMergedEntities = (key: string) => (state: State) => {
   const { ids, data } = state.queries[key];
   const { domain, options } = decodeQueryCacheKey(key);
 
