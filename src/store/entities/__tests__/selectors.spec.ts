@@ -21,6 +21,10 @@ describe('Entities selectors', () => {
       action: 'list',
       options: { include: 'participants.participant' },
     }),
+    aRunningQuery: generateQueryCacheKey({
+      domain: 'contacts',
+      action: 'list',
+    }),
   };
 
   const INITIAL_STATE = {
@@ -111,6 +115,9 @@ describe('Entities selectors', () => {
         loading: false,
         ids: ['dbce36dc-328c-4e50-9685-471de7725b7b', '5c04d510-a613-4281-9b1a-949a3ed0d982'],
       },
+      [keys.aRunningQuery]: {
+        loading: true,
+      }
     },
   };
 
@@ -231,6 +238,12 @@ describe('Entities selectors', () => {
 
       expect(selectedEntities).toEqual(resultEntities);
     });
+
+    it('returns null when the query is still loading', () => {
+      const selectedEntities = selectMergedEntities(keys.aRunningQuery)(INITIAL_STATE);
+
+      expect(selectedEntities).toBeNull();
+    })
   });
 
   describe('mergeEntitiesIntoPaths', () => {
