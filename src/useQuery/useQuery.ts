@@ -1,4 +1,4 @@
-import { useEffect, useContext, useCallback } from 'react';
+import { useEffect, useContext, useCallback, useMemo } from 'react';
 
 import generateQueryCacheKey from '../utils/generateQueryCacheKey';
 import useUpdatableState from '../utils/useUpdatableState';
@@ -6,11 +6,11 @@ import normalize from '../utils/normalize';
 import { Response } from '../typings/API';
 
 import { queryRequest, querySuccess, queryFailure } from '../store/queries/actions';
-import CustomReduxContext from '../store/CustomReduxContext';
+import { useSelector } from '../store/CustomReduxContext';
 import Context from '../Context';
 import { saveNormalizedEntities } from '../store/entities/actions';
 import { selectMergedEntities } from '../store/entities/selectors';
-import { selectQuery, selectMetaFromQuery } from '../store/queries/selectors';
+import { selectMetaFromQuery, selectLoadingFromQuery } from '../store/queries/selectors';
 import { TYPE_DOMAIN_MAPPING } from '../store/entities/constants';
 import { useDispatch } from '../store/CustomReduxContext';
 
@@ -45,12 +45,14 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   });
 
   const API = useContext(Context);
-
-  // Get the redux store
-  // this only works because our store is immutable and won't trigger
-  // a re-render when it gets updated
-  const { store } = useContext(CustomReduxContext);
+  const selectLoading = useCallback(selectLoadingFromQuery(key), [key]);
+  const selectData = useCallback(selectMergedEntities(key), [key]);
+  const selectMeta = useCallback(selectMetaFromQuery(key), [key]);
   const dispatch = useDispatch();
+
+  const loading = useSelector(selectLoading);
+  const data = useSelector(selectData);
+  const meta = useSelector(selectMeta);
 
   // Helper callback function that does the actual request
   const requestData = useCallback(
@@ -115,7 +117,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
           setState({ loading: false, error });
         });
     },
-    [state.data],
+    [data],
   );
 
   // Effect only runs when the result query (with variables) has changed
@@ -132,10 +134,10 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
       const { domain, action, options } = query(newVariables);
       requestData(domain, action, options, updateQuery);
     },
-    [key, state.data],
+    [key, data],
   );
 
-  return { ...state, fetchMore };
+  return { loading, data, meta, fetchMore };
 };
 
 export default useQuery;
