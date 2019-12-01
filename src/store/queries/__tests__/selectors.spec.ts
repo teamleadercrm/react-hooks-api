@@ -26,6 +26,12 @@ describe('queries selectors', () => {
     });
   });
 
+  it('selects the loading state of the query', () => {
+    const loading = selectLoadingFromQuery('uniqueKey')(INITIAL_STATE);
+
+    expect(loading).toBeFalsy();
+  })
+
   it('selects the meta of the query', () => {
     const meta = selectMetaFromQuery('uniqueKey')(INITIAL_STATE);
 
