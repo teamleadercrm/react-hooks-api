@@ -48,7 +48,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
 
   // Helper callback function that does the actual request
   const requestData = useCallback(
-    (domain, action, options, updateQuery) => {
+    (domain, action, options) => {
       const isEntityAction = action === 'info' || action === 'list';
 
       if (!ignoreCache && data) {
@@ -105,16 +105,17 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   // Effect only runs when the result query (with variables) has changed
   useEffect(() => {
     const { domain, action, options } = query(variables);
-    requestData(domain, action, options, null);
+    requestData(domain, action, options);
   }, [key]);
 
   // Function supplied to do a refetch with new variables
   // Takes an updateQuery variable that allows you to specify how
   // The data should be merged
+  // @TODO refactor this so it works with our new redux flow
   const fetchMore = useCallback(
     ({ variables: newVariables, updateQuery }) => {
       const { domain, action, options } = query(newVariables);
-      requestData(domain, action, options, updateQuery);
+      requestData(domain, action, options);
     },
     [key, data],
   );
