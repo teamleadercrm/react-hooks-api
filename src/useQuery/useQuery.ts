@@ -75,37 +75,40 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
       // @TODO this promise should be cancellable
       API[domain][action](options)
         .then((response: Response) => {
-          dispatch(
-            querySuccess({
-              key,
-              ...(isEntityAction && { ids: Array.isArray(response.data) ? response.data.map(entity => entity.id) : response.data.id }),
-              ...(!isEntityAction && { data: response.data }),
-              meta: response.meta,
-            }),
-          );
-
-          if (isEntityAction) {
-            const mainEntities = normalize(response.data);
-            dispatch(saveNormalizedEntities({ type: domain, entities: mainEntities }));
-          }
-
-          if (response.included) {
-            Object.keys(response.included).forEach(entityType => {
+          if (!isEntityAction) {
+            Object.keys(response.included || {}).forEach(entityType => {
               const normalizedEntities = normalize(response.included[entityType]);
               const domainFromType = TYPE_DOMAIN_MAPPING[entityType];
               dispatch(saveNormalizedEntities({ type: domainFromType, entities: normalizedEntities }));
             });
+
+            dispatch(
+              querySuccess({
+                key,
+                data: response.data,
+                meta: response.meta,
+              }),
+            );
+
+            return;
           }
 
-          const data = selectMergedEntities(store.getState(), { key });
-          const meta = selectMetaFromQuery(store.getState(), key);
+          const mainEntities = normalize(response.data);
+          dispatch(saveNormalizedEntities({ type: domain, entities: mainEntities }));
 
-          setState({
-            loading: false,
-            data: updateQuery ? updateQuery({ previousData: state.data, data }) : data,
-            meta,
-            error: undefined,
+          Object.keys(response.included || {}).forEach(entityType => {
+            const normalizedEntities = normalize(response.included[entityType]);
+            const domainFromType = TYPE_DOMAIN_MAPPING[entityType];
+            dispatch(saveNormalizedEntities({ type: domainFromType, entities: normalizedEntities }));
           });
+
+          dispatch(
+            querySuccess({
+              key,
+              ids: Array.isArray(response.data) ? response.data.map(entity => entity.id) : response.data.id,
+              meta: response.meta,
+            }),
+          );
         })
         .catch(error => {
           dispatch(queryFailure({ key, error }));
