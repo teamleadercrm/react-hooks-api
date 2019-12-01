@@ -116,7 +116,7 @@ describe('Entities selectors', () => {
 
   describe('selectMergedEntities', () => {
     it('selects the correct entity based on the query', () => {
-      const selectedEntity = selectMergedEntities(INITIAL_STATE, { key: keys.singleProjectKey });
+      const selectedEntity = selectMergedEntities(keys.singleProjectKey)(INITIAL_STATE);
 
       const resultEntity = {
         id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
@@ -130,7 +130,7 @@ describe('Entities selectors', () => {
     });
 
     it('selects the correct entity and merges the sideloaded entities', () => {
-      const selectedEntity = selectMergedEntities(INITIAL_STATE, { key: keys.singleProjectKeyWithInclude });
+      const selectedEntity = selectMergedEntities(keys.singleProjectKeyWithInclude)(INITIAL_STATE);
 
       const resultEntity = {
         id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
@@ -145,7 +145,7 @@ describe('Entities selectors', () => {
     });
 
     it('selects the correct entities when a collection was requested', () => {
-      const selectedEntities = selectMergedEntities(INITIAL_STATE, { key: keys.multipleProjectsKey });
+      const selectedEntities = selectMergedEntities(keys.multipleProjectsKey)(INITIAL_STATE);
 
       const resultEntities = [
         {
@@ -168,7 +168,7 @@ describe('Entities selectors', () => {
     });
 
     it('selects the correct collection of entities and merges the sideloaded entities', () => {
-      const selectedEntities = selectMergedEntities(INITIAL_STATE, { key: keys.multipleProjectsKeyWithInclude });
+      const selectedEntities = selectMergedEntities(keys.multipleProjectsKeyWithInclude)(INITIAL_STATE);
 
       const resultEntities = [
         {
@@ -193,9 +193,7 @@ describe('Entities selectors', () => {
     });
 
     it('can select and merge deeply nested sideloaded entities', () => {
-      const selectedEntities = selectMergedEntities(INITIAL_STATE, {
-        key: keys.multipleProjectsKeyWithNestedIncludedData,
-      });
+      const selectedEntities = selectMergedEntities(keys.multipleProjectsKeyWithNestedIncludedData)(INITIAL_STATE);
 
       const resultEntities = [
         {
