@@ -1,7 +1,6 @@
 import { useEffect, useContext, useCallback, useMemo } from 'react';
 
 import generateQueryCacheKey from '../utils/generateQueryCacheKey';
-import useUpdatableState from '../utils/useUpdatableState';
 import normalize from '../utils/normalize';
 import { Response } from '../typings/API';
 
@@ -37,13 +36,6 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
 ) => {
   const key = useMemo(() => generateQueryCacheKey(query(variables)), [variables]);
 
-  const [state, setState] = useUpdatableState({
-    loading: false,
-    data: undefined,
-    error: undefined,
-    meta: undefined,
-  });
-
   const API = useContext(Context);
   const selectLoading = useCallback(selectLoadingFromQuery(key), [key]);
   const selectData = useCallback(selectMergedEntities(key), [key]);
@@ -59,6 +51,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
     (domain, action, options, updateQuery) => {
       const isEntityAction = action === 'info' || action === 'list';
 
+      // @TODO
       if (!ignoreCache) {
         // Check for previous results
         const cacheResult = selectQuery(store.getState(), key);
@@ -66,13 +59,11 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
           const data = selectMergedEntities(store.getState(), { key });
           const meta = selectMetaFromQuery(store.getState(), key);
 
-          setState({ loading: false, data, meta, error: undefined });
           return;
         }
       }
 
       dispatch(queryRequest({ key }));
-      setState({ loading: true, error: undefined });
 
       // @TODO this promise should be cancellable
       API[domain][action](options)
@@ -114,7 +105,6 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
         })
         .catch(error => {
           dispatch(queryFailure({ key, error }));
-          setState({ loading: false, error });
         });
     },
     [data],
