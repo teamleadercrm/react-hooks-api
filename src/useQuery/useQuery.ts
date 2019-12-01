@@ -35,6 +35,8 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   variables,
   { ignoreCache = defaultConfig.ignoreCache } = defaultConfig,
 ) => {
+  const key = useMemo(() => generateQueryCacheKey(query(variables)), [variables]);
+
   const [state, setState] = useUpdatableState({
     loading: false,
     data: undefined,
@@ -53,7 +55,6 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   // Helper callback function that does the actual request
   const requestData = useCallback(
     (domain, action, options, updateQuery) => {
-      const key = generateQueryCacheKey({ domain, action, options });
       const isEntityAction = action === 'info' || action === 'list';
 
       if (!ignoreCache) {
@@ -118,7 +119,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   useEffect(() => {
     const { domain, action, options } = query(variables);
     requestData(domain, action, options, null);
-  }, [generateQueryCacheKey(query(variables))]);
+  }, [key]);
 
   // Function supplied to do a refetch with new variables
   // Takes an updateQuery variable that allows you to specify how
@@ -128,7 +129,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
       const { domain, action, options } = query(newVariables);
       requestData(domain, action, options, updateQuery);
     },
-    [generateQueryCacheKey(query(variables)), state.data],
+    [key, state.data],
   );
 
   return { ...state, fetchMore };
