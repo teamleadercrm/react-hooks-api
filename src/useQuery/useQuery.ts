@@ -51,16 +51,8 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
     (domain, action, options, updateQuery) => {
       const isEntityAction = action === 'info' || action === 'list';
 
-      // @TODO
-      if (!ignoreCache) {
-        // Check for previous results
-        const cacheResult = selectQuery(store.getState(), key);
-        if (cacheResult) {
-          const data = selectMergedEntities(store.getState(), { key });
-          const meta = selectMetaFromQuery(store.getState(), key);
-
-          return;
-        }
+      if (!ignoreCache && data) {
+        return;
       }
 
       dispatch(queryRequest({ key }));
