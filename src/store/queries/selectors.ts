@@ -1,10 +1,11 @@
 import { State } from '../reducer';
 
-export const selectQuery = (state: State, key: string) => {
+export const selectQueryWithKey = (key: string) => (state: State) => {
   return state.queries[key];
 };
 
-export const selectMetaFromQuery = (state: State, key: string) => {
-  return selectQuery(state, key).meta;
+export const selectMetaFromQuery = (key: string) => (state: State) => {
+  const query = selectQueryWithKey(key)(state);
+  return query && query.meta;
 };
 
