@@ -1,4 +1,4 @@
-import { selectQuery, selectMetaFromQuery } from '../selectors';
+import { selectQueryWithKey, selectMetaFromQuery, selectLoadingFromQuery } from '../selectors';
 
 describe('queries selectors', () => {
   const INITIAL_STATE = {
@@ -17,7 +17,7 @@ describe('queries selectors', () => {
   };
 
   it('selects the correct query', () => {
-    const query = selectQuery(INITIAL_STATE, 'uniqueKey');
+    const query = selectQueryWithKey('uniqueKey')(INITIAL_STATE);
 
     expect(query).toEqual({
       loading: false, meta: { matches: 2 }, data: {
@@ -27,7 +27,7 @@ describe('queries selectors', () => {
   });
 
   it('selects the meta of the query', () => {
-    const meta = selectMetaFromQuery(INITIAL_STATE, 'uniqueKey');
+    const meta = selectMetaFromQuery('uniqueKey')(INITIAL_STATE);
 
     expect(meta).toEqual({ matches: 2 });
   });
