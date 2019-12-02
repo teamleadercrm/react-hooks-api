@@ -1,3 +1,9 @@
+## [0.1.0-rc3] - 2019-12-02
+
+### 🐛 Fixed
+
+* Fixed a bug where we were trying to select ids of a query before it has finished loading https://github.com/teamleadercrm/react-hooks-api/pull/153
+
 ## [0.1.0-rc2] - 2019-12-02
 
 ### 🐛 Fixed
