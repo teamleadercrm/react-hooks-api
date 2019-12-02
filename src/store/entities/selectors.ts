@@ -49,6 +49,12 @@ export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[],
 
 export const selectMergedEntities = (state: State, { key }: { key: string }) => {
   const { ids, data } = state.queries[key];
+
+  // Query hasn't finished loading yet
+  if (!ids && !data) {
+    return null;
+  }
+
   const { domain, options } = decodeQueryCacheKey(key);
 
   const include = options && options.include;
