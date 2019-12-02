@@ -1,3 +1,9 @@
+## [0.1.0-rc2] - 2019-12-02
+
+### 🐛 Fixed
+
+* Fixed a bug that caused entities to be overwritten instead of enriched
+
 ## [0.1.0-rc1] - 2019-11-29
 
 ### 💥Breaking changes
