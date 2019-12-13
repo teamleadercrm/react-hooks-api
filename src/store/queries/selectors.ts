@@ -1,16 +1,22 @@
+import { createSelector } from 'reselect'
+
 import { State } from '../reducer';
 
-export const selectQueryWithKey = (key: string) => (state: State) => {
-  return state.queries[key];
-};
+export const selectQueries = (state: State) => state.queries;
 
-export const selectLoadingFromQuery = (key: string) => (state: State) => {
-  const query = selectQueryWithKey(key)(state);
-  return query && query.loading || false;
-}
+export const selectQueryByKey = createSelector(
+  selectQueries,
+  (_, key) => key,
+  (queries, key) => queries[key]
+);
 
-export const selectMetaFromQuery = (key: string) => (state: State) => {
-  const query = selectQueryWithKey(key)(state);
-  return query && query.meta;
-};
+export const selectLoadingFromQueryFactory = () => createSelector(
+  selectQueryByKey,
+  (query) => query && query.loading || false
+);
+
+export const selectMetaFromQueryFactory = () => createSelector(
+  selectQueryByKey,
+  (query) => query && query.meta
+);
 
