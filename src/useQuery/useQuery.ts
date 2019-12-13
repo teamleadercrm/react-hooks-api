@@ -1,4 +1,4 @@
-import { useEffect, useContext, useCallback, useMemo } from 'react';
+import { useEffect, useContext, useCallback, useMemo, useState } from 'react';
 
 import generateQueryCacheKey from '../utils/generateQueryCacheKey';
 import normalize from '../utils/normalize';
@@ -8,8 +8,8 @@ import { queryRequest, querySuccess, queryFailure } from '../store/queries/actio
 import { useSelector } from '../store/CustomReduxContext';
 import Context from '../Context';
 import { saveNormalizedEntities } from '../store/entities/actions';
-import { selectMergedEntities } from '../store/entities/selectors';
-import { selectMetaFromQuery, selectLoadingFromQuery } from '../store/queries/selectors';
+import { selectMergedEntitiesFactory } from '../store/entities/selectors';
+import { selectLoadingFromQueryFactory, selectMetaFromQueryFactory } from '../store/queries/selectors';
 import { TYPE_DOMAIN_MAPPING } from '../store/entities/constants';
 import { useDispatch } from '../store/CustomReduxContext';
 
@@ -37,14 +37,14 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   const key = useMemo(() => generateQueryCacheKey(query(variables)), [variables]);
 
   const API = useContext(Context);
-  const selectLoading = useCallback(selectLoadingFromQuery(key), [key]);
-  const selectData = useCallback(selectMergedEntities(key), [key]);
-  const selectMeta = useCallback(selectMetaFromQuery(key), [key]);
+  const selectLoading = useMemo(selectLoadingFromQueryFactory, []);
+  const selectData = useMemo(selectMergedEntitiesFactory, []);
+  const selectMeta = useMemo(selectMetaFromQueryFactory, []);
   const dispatch = useDispatch();
 
-  const loading = useSelector(selectLoading);
-  const data = useSelector(selectData);
-  const meta = useSelector(selectMeta);
+  const loading = useSelector(state => selectLoading(state, key));
+  const data = useSelector(state => selectData(state, key));
+  const meta = useSelector(state => selectMeta(state, key));
 
   // Helper callback function that does the actual request
   const requestData = useCallback(
