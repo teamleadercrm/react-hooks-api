@@ -1,6 +1,6 @@
 import generateQueryCacheKey from '../../../utils/generateQueryCacheKey';
 
-import { selectMergedEntities, mergeEntitiesIntoPaths } from '../selectors';
+import { mergeEntitiesIntoPaths, selectMergedEntitiesFactory } from '../selectors';
 
 describe('Entities selectors', () => {
   const keys = {
@@ -121,9 +121,11 @@ describe('Entities selectors', () => {
     },
   };
 
-  describe('selectMergedEntities', () => {
+  describe('selectMergedEntitiesFactory', () => {
+    const selectMergedEntities = selectMergedEntitiesFactory();
+
     it('selects the correct entity based on the query', () => {
-      const selectedEntity = selectMergedEntities(keys.singleProjectKey)(INITIAL_STATE);
+      const selectedEntity = selectMergedEntities(INITIAL_STATE, keys.singleProjectKey);
 
       const resultEntity = {
         id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
@@ -137,7 +139,7 @@ describe('Entities selectors', () => {
     });
 
     it('selects the correct entity and merges the sideloaded entities', () => {
-      const selectedEntity = selectMergedEntities(keys.singleProjectKeyWithInclude)(INITIAL_STATE);
+      const selectedEntity = selectMergedEntities(INITIAL_STATE, keys.singleProjectKeyWithInclude);
 
       const resultEntity = {
         id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
@@ -152,7 +154,7 @@ describe('Entities selectors', () => {
     });
 
     it('selects the correct entities when a collection was requested', () => {
-      const selectedEntities = selectMergedEntities(keys.multipleProjectsKey)(INITIAL_STATE);
+      const selectedEntities = selectMergedEntities(INITIAL_STATE, keys.multipleProjectsKey);
 
       const resultEntities = [
         {
@@ -175,7 +177,7 @@ describe('Entities selectors', () => {
     });
 
     it('selects the correct collection of entities and merges the sideloaded entities', () => {
-      const selectedEntities = selectMergedEntities(keys.multipleProjectsKeyWithInclude)(INITIAL_STATE);
+      const selectedEntities = selectMergedEntities(INITIAL_STATE, keys.multipleProjectsKeyWithInclude);
 
       const resultEntities = [
         {
@@ -200,7 +202,7 @@ describe('Entities selectors', () => {
     });
 
     it('can select and merge deeply nested sideloaded entities', () => {
-      const selectedEntities = selectMergedEntities(keys.multipleProjectsKeyWithNestedIncludedData)(INITIAL_STATE);
+      const selectedEntities = selectMergedEntities(INITIAL_STATE, keys.multipleProjectsKeyWithNestedIncludedData);
 
       const resultEntities = [
         {
@@ -240,7 +242,7 @@ describe('Entities selectors', () => {
     });
 
     it('returns null when the query is still loading', () => {
-      const selectedEntities = selectMergedEntities(keys.aRunningQuery)(INITIAL_STATE);
+      const selectedEntities = selectMergedEntities(INITIAL_STATE, keys.aRunningQuery);
 
       expect(selectedEntities).toBeNull();
     })
