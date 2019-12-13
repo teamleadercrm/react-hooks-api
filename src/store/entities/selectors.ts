@@ -1,6 +1,7 @@
 import produce from 'immer';
 import set from 'lodash.set';
 import camelCase from 'lodash.camelCase';
+import { createSelector } from 'reselect';
 
 import decodeQueryCacheKey from '../../utils/decodeQueryCacheKey';
 
@@ -9,7 +10,7 @@ import { State as EntitiesState } from '../entities/reducer';
 import { Entity } from '../../typings/API';
 import { TYPE_DOMAIN_MAPPING } from './constants';
 import resolveReferences, { convertPathToKeys } from '../../utils/referenceResolver';
-import { selectQueryWithKey } from '../queries/selectors';
+import { selectQueryByKey } from '../queries/selectors';
 
 /**
  * Helper function to merge entities into their respective paths
@@ -48,42 +49,48 @@ export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[],
   })
 };
 
-export const selectMergedEntities = (key: string) => (state: State) => {
-  const query = selectQueryWithKey(key)(state);
-  // The query hasn't finished running yet
-  if (!query || (!query.ids && !query.data)) {
-    return null;
-  }
+export const selectEntities = (state: State) => state.entities;
 
-  const { ids, data } = query;
-  const { domain, options } = decodeQueryCacheKey(key);
+export const selectMergedEntitiesFactory = () => createSelector(
+  selectEntities,
+  selectQueryByKey,
+  (_, key) => key,
+  (entities, query, key) => {
+    if (!query || (!query.ids && !query.data)) {
+      return null;
+    }
 
-  const include = options && options.include;
+    const { ids, data } = query;
+    const { domain, options } = decodeQueryCacheKey(key);
 
-  // single entity, aka .info request
-  if ((data && !Array.isArray(data)) || typeof ids === 'string') {
-    const entity = data || state.entities[domain][ids as string];
+    const include = options && options.include;
+
+    // single entity, aka .info request
+    if ((data && !Array.isArray(data)) || typeof ids === 'string') {
+      const entity = data || entities[domain][ids as string];
+
+      if (include) {
+        const entityPaths = include.split(',');
+
+        return mergeEntitiesIntoPaths(entities, entityPaths, entity);
+      }
+
+      return entity;
+    }
+
+    const entitiesForQuery = data || ids.map(id => entities[domain][id]);
 
     if (include) {
       const entityPaths = include.split(',');
 
-      return mergeEntitiesIntoPaths(state.entities, entityPaths, entity);
+      const entitiesWithIncludedEntities = entitiesForQuery.map(entity => {
+        return mergeEntitiesIntoPaths(entities, entityPaths, entity);
+      });
+
+      return entitiesWithIncludedEntities;
     }
 
-    return entity;
+    return entitiesForQuery;
   }
+);
 
-  const entities = data || ids.map(id => state.entities[domain][id]);
-
-  if (include) {
-    const entityPaths = include.split(',');
-
-    const entitiesWithIncludedEntities = entities.map(entity => {
-      return mergeEntitiesIntoPaths(state.entities, entityPaths, entity);
-    });
-
-    return entitiesWithIncludedEntities;
-  }
-
-  return entities;
-};
