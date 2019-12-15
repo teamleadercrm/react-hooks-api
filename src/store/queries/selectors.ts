@@ -20,3 +20,12 @@ export const selectMetaFromQueryFactory = () => createSelector(
   (query) => query && query.meta
 );
 
+export const selectLoadingFromQueryWithUpdateQueriesFactory = () => createSelector(
+  (state: State) => state,
+  (_, key) => key,
+  (_, __, updateQueryKeys) => updateQueryKeys,
+  (state, key: string, updateQueryKeys: string[]) => {
+    const selectLoadingFromQuery = selectLoadingFromQueryFactory();
+    return [key, ...updateQueryKeys].some(nextKey => selectLoadingFromQuery(state, nextKey));
+  }
+)
