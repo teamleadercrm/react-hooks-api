@@ -1,6 +1,6 @@
 import generateQueryCacheKey from '../../../utils/generateQueryCacheKey';
 
-import { mergeEntitiesIntoPaths, selectMergedEntitiesFactory } from '../selectors';
+import { mergeEntitiesIntoPaths, selectMergedEntitiesFactory, selectMergedEntitiesWithUpdateQueriesFactory } from '../selectors';
 
 describe('Entities selectors', () => {
   const keys = {
@@ -285,4 +285,67 @@ describe('Entities selectors', () => {
       expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(result);
     });
   });
+
+  describe('selectMergedEntitiesWithUpdateQueries', () => {
+    const selectMergedEntitiesWithUpdateQueries = selectMergedEntitiesWithUpdateQueriesFactory();
+
+    it('correctly merges the data using a map of keys and updateQueries', () => {
+      const entities = {
+        projects: {
+          '4128e256-472d-438f-bd35-8f80bf9ed72f': {
+            id: '4128e256-472d-438f-bd35-8f80bf9ed72f'
+          },
+          '45266e39-4edb-47f6-9f68-7c5e111eb4e2': {
+            id: '45266e39-4edb-47f6-9f68-7c5e111eb4e2f'
+          },
+          'c211eadb-458d-4ef5-8d67-4358241e0757': {
+            id: 'c211eadb-458d-4ef5-8d67-4358241e0757'
+          }
+        }
+      };
+
+      const updateQueryKeys = {
+        initialKey: generateQueryCacheKey({ domain: 'projects', action: 'list', options: { page: 1 } }),
+        firstUpdateKey: generateQueryCacheKey({ domain: 'projects', action: 'list', options: { page: 2 } }),
+        secondUpdateKey: generateQueryCacheKey({ domain: 'projects', action: 'list', options: { page: 3 } }),
+
+      }
+
+      const queries = {
+        [updateQueryKeys.initialKey]: {
+          loading: false,
+          ids: ['4128e256-472d-438f-bd35-8f80bf9ed72f']
+        },
+        [updateQueryKeys.firstUpdateKey]: {
+          loading: false,
+          ids: ['45266e39-4edb-47f6-9f68-7c5e111eb4e2']
+        },
+        [updateQueryKeys.secondUpdateKey]: {
+          loading: false,
+          ids: ['c211eadb-458d-4ef5-8d67-4358241e0757']
+        },
+      };
+
+      const UPDATE_QUERIES_INITIAL_STATE = { entities, queries }
+
+      const updateQueries = {
+        [updateQueryKeys.firstUpdateKey]: ({ previousData, data }) => [...previousData, ...data],
+        [updateQueryKeys.secondUpdateKey]: ({ previousData, data }) => [...previousData, ...data],
+      };
+
+      const result = [
+        {
+          id: '4128e256-472d-438f-bd35-8f80bf9ed72f'
+        }, {
+          id: '45266e39-4edb-47f6-9f68-7c5e111eb4e2f'
+        }, {
+          id: 'c211eadb-458d-4ef5-8d67-4358241e0757'
+        }
+      ]
+
+      expect(
+        selectMergedEntitiesWithUpdateQueries(UPDATE_QUERIES_INITIAL_STATE, updateQueryKeys.initialKey, updateQueries)
+      ).toEqual(result);
+    });
+  })
 });
