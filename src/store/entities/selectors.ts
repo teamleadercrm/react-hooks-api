@@ -94,3 +94,24 @@ export const selectMergedEntitiesFactory = () => createSelector(
   }
 );
 
+export const selectMergedEntitiesWithUpdateQueriesFactory = () => createSelector(
+  (state: State) => state,
+  (_, key) => key,
+  (_, __, updateQueries) => updateQueries,
+  (state: State, key: string, updateQueries: Record<string, (data: { previousData: any; data: any }) => any>) => {
+    const selectMergedEntities = selectMergedEntitiesFactory();
+
+    const initialData = selectMergedEntities(state, key);
+
+    return Object.entries(updateQueries).reduce((updatedData, [nextKey, nextUpdateQuery]) => {
+      const nextQueryResult = selectMergedEntities(state, nextKey);
+
+      // This query's results are still loading, don't run its updateQuery function on the data
+      if (!nextQueryResult) {
+        return updatedData;
+      }
+
+      return nextUpdateQuery({ previousData: updatedData, data: nextQueryResult })
+    }, initialData);
+  }
+);
