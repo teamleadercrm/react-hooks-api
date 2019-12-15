@@ -1,4 +1,4 @@
-import { selectQueries, selectLoadingFromQueryFactory, selectMetaFromQueryFactory, selectQueryByKey } from '../selectors';
+import { selectQueries, selectLoadingFromQueryFactory, selectMetaFromQueryFactory, selectQueryByKey, selectLoadingFromQueryWithUpdateQueriesFactory } from '../selectors';
 
 describe('queries selectors', () => {
   const INITIAL_STATE = {
@@ -13,6 +13,9 @@ describe('queries selectors', () => {
           groupedBy: 'participant'
         }
       },
+      uniqueKey2: {
+        loading: true,
+      }
     },
   };
 
@@ -29,6 +32,9 @@ describe('queries selectors', () => {
           groupedBy: 'participant'
         }
       },
+      uniqueKey2: {
+        loading: true,
+      }
     });
   });
 
@@ -55,4 +61,12 @@ describe('queries selectors', () => {
 
     expect(meta).toEqual({ matches: 2 });
   });
+
+  it('selects the combined loading state of multiple queries', () => {
+    const selectLoadingFromQueryWithUpdateQueries = selectLoadingFromQueryWithUpdateQueriesFactory();
+
+    const loading = selectLoadingFromQueryWithUpdateQueries(INITIAL_STATE, 'uniqueKey', ['uniqueKey2']);
+
+    expect(loading).toBeTruthy();
+  })
 });
