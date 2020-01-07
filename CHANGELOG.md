@@ -1,3 +1,9 @@
+## [0.1.0-rc5] - 2020-01-07
+
+### 🐛 Fixed
+
+* Typing for the exported queries object
+
 ## [0.1.0-rc4] - 2020-01-07
 
 ### ✨Added
