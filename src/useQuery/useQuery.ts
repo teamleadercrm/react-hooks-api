@@ -25,7 +25,7 @@ type Options = {
   ignoreCache: boolean;
 };
 
-export const queries = {};
+export const queries: Record<string, { fetch: () => void }> = {};
 
 const defaultConfig = {
   ignoreCache: false,
