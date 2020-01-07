@@ -1,3 +1,9 @@
+## [0.1.0-rc4] - 2020-01-07
+
+### ✨Added
+
+* Implement global queries object https://github.com/teamleadercrm/react-hooks-api/pull/178
+
 ## [0.1.0-rc3] - 2019-12-02
 
 ### 🐛 Fixed
