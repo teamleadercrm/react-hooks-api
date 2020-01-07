@@ -1,2 +1,3 @@
-import useQuery from './useQuery';
+import useQuery, { queries } from './useQuery';
+export { queries };
 export default useQuery;

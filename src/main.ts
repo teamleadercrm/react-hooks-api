@@ -1,9 +1,10 @@
-import useQuery from './useQuery';
+import useQuery, { queries } from './useQuery';
 import Provider from './Provider';
 
-export { useQuery, Provider };
+export { queries, useQuery, Provider };
 
 export default {
+  queries,
   useQuery,
-  Provider
+  Provider,
 }
