@@ -25,6 +25,8 @@ type Options = {
   ignoreCache: boolean;
 };
 
+export const queries = {};
+
 const defaultConfig = {
   ignoreCache: false,
 };
@@ -34,6 +36,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   variables,
   { ignoreCache = defaultConfig.ignoreCache } = defaultConfig,
 ) => {
+  const queryKey = generateQueryCacheKey(query(variables));
   const [state, setState] = useUpdatableState({
     loading: false,
     data: undefined,
@@ -116,7 +119,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   useEffect(() => {
     const { domain, action, options } = query(variables);
     requestData(domain, action, options, null);
-  }, [generateQueryCacheKey(query(variables))]);
+  }, [queryKey]);
 
   // Function supplied to do a refetch with new variables
   // Takes an updateQuery variable that allows you to specify how
@@ -126,8 +129,18 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
       const { domain, action, options } = query(newVariables);
       requestData(domain, action, options, updateQuery);
     },
-    [generateQueryCacheKey(query(variables)), state.data],
+    [queryKey, state.data],
   );
+
+  /*
+  * Register the query in a global object
+  * @TODO this should probably be set in the store instead
+  * so we don't pollute the global scope, but for now, it doesn't hurt
+  */
+  queries[queryKey] = {
+    // Function that can be called to refresh this specific query
+    fetch: () => fetchMore({ variables }),
+  }
 
   return { ...state, fetchMore };
 };
