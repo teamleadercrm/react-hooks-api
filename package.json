@@ -1,6 +1,6 @@
 {
   "name": "@teamleader/react-hooks-api",
-  "version": "0.1.0-rc1",
+  "version": "0.1.0-rc5",
   "description": "React hooks for the Teamleader API",
   "main": "./lib/bundle.cjs.js",
   "module": "./lib/bundle.esm.js",
@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/teamleadercrm/react-hooks-api#readme",
   "dependencies": {
-    "immer": "^3.1.2",
+    "immer": "^5.0.0",
     "lodash.camelcase": "^4.3.0",
     "lodash.set": "^4.3.2"
   },

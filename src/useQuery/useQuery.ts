@@ -5,13 +5,12 @@ import normalize from '../utils/normalize';
 import { Response } from '../typings/API';
 
 import { queryRequest, querySuccess, queryFailure } from '../store/queries/actions';
-import { useSelector } from '../store/CustomReduxContext';
+import { useSelector, useDispatch } from '../store/CustomReduxContext';
 import Context from '../Context';
 import { saveNormalizedEntities } from '../store/entities/actions';
 import { selectMergedEntitiesFactory } from '../store/entities/selectors';
 import { selectLoadingFromQueryFactory, selectMetaFromQueryFactory } from '../store/queries/selectors';
 import { TYPE_DOMAIN_MAPPING } from '../store/entities/constants';
-import { useDispatch } from '../store/CustomReduxContext';
 
 type CalculatedQuery = {
   domain: string;
@@ -24,6 +23,8 @@ type Query = (variables?: any) => CalculatedQuery;
 type Options = {
   ignoreCache: boolean;
 };
+
+export const queries: Record<string, { fetch: () => void }> = {};
 
 const defaultConfig = {
   ignoreCache: false,
@@ -119,6 +120,16 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
     },
     [key, data],
   );
+
+  /*
+  * Register the query in a global object
+  * @TODO this should probably be set in the store instead
+  * so we don't pollute the global scope, but for now, it doesn't hurt
+  */
+  queries[key] = {
+    // Function that can be called to refresh this specific query
+    fetch: () => fetchMore({ variables }),
+  }
 
   return { loading, data, meta, fetchMore };
 };

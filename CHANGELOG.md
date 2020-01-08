@@ -1,3 +1,27 @@
+## [0.1.0-rc5] - 2020-01-07
+
+### 🐛 Fixed
+
+* Typing for the exported queries object
+
+## [0.1.0-rc4] - 2020-01-07
+
+### ✨Added
+
+* Implement global queries object https://github.com/teamleadercrm/react-hooks-api/pull/178
+
+## [0.1.0-rc3] - 2019-12-02
+
+### 🐛 Fixed
+
+* Fixed a bug where we were trying to select ids of a query before it has finished loading https://github.com/teamleadercrm/react-hooks-api/pull/153
+
+## [0.1.0-rc2] - 2019-12-02
+
+### 🐛 Fixed
+
+* Fixed a bug that caused entities to be overwritten instead of enriched
+
 ## [0.1.0-rc1] - 2019-11-29
 
 ### 💥Breaking changes
