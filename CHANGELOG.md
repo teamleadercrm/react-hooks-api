@@ -1,3 +1,11 @@
+## Unreleased
+
+### Changed
+
+* Major rework to use the redux store as a single source of truth (https://github.com/teamleadercrm/react-hooks-api/pull/157):
+   - Selector factories (still some todos to be handled here)
+   - Separate `fetcher` middleware
+
 ## [0.1.0-rc5] - 2020-01-07
 
 ### 🐛 Fixed
