@@ -27,6 +27,23 @@ type Options = {
 
 export const queries: Record<string, { fetch: () => void }> = {};
 
+const registerQuery = (query: { fetch: () => void } | undefined, fetch: () => void) => {
+  // A previous query has already been registered, hook up its fetch call as well
+  // @TODO once every query relies on the same redux state object, this can be removed
+  if (query) {
+    return {
+      fetch: () => {
+        query.fetch();
+        fetch();
+      }
+    }
+  }
+
+  return {
+    fetch
+  }
+}
+
 const defaultConfig = {
   ignoreCache: false,
 };
@@ -137,10 +154,9 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   * @TODO this should probably be set in the store instead
   * so we don't pollute the global scope, but for now, it doesn't hurt
   */
-  queries[queryKey] = {
-    // Function that can be called to refresh this specific query
-    fetch: () => fetchMore({ variables }),
-  }
+  useEffect(() => {
+    queries[queryKey] = registerQuery(queries[queryKey], () => fetchMore({ variables }))
+  }, [queryKey])
 
   return { ...state, fetchMore };
 };
