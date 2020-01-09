@@ -1,3 +1,9 @@
+## [0.1.0-rc6] - 2020-01-09
+
+### 🐛 Fixed
+
+* 🐛 Fix fetch call being overwritten when 2 identical queries get registered https://github.com/teamleadercrm/react-hooks-api/pull/180
+
 ## [0.1.0-rc5] - 2020-01-07
 
 ### 🐛 Fixed
