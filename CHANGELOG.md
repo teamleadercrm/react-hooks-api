@@ -1,3 +1,10 @@
+### Unreleased
+
+### ✨Added
+
+* Support `fetchAll` option from `@teamleader/api` ([ArnaudWeyts](https://github.com/ArnaudWeyts) in [#183](https://github.com/teamleadercrm/react-hooks-api/pull/183))
+
+
 ## [0.1.0-rc6] - 2020-01-09
 
 ### 🐛 Fixed

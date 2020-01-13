@@ -22,7 +22,8 @@ type CalculatedQuery = {
 type Query = (variables?: any) => CalculatedQuery;
 
 type Options = {
-  ignoreCache: boolean;
+  ignoreCache?: boolean;
+  fetchAll?: boolean;
 };
 
 export const queries: Record<string, { fetch: () => void }> = {};
@@ -46,12 +47,16 @@ const registerQuery = (query: { fetch: () => void } | undefined, fetch: () => vo
 
 const defaultConfig = {
   ignoreCache: false,
+  fetchAll: false,
 };
 
 const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   query,
   variables,
-  { ignoreCache = defaultConfig.ignoreCache } = defaultConfig,
+  {
+    ignoreCache = defaultConfig.ignoreCache,
+    fetchAll = defaultConfig.fetchAll
+  } = defaultConfig,
 ) => {
   const queryKey = generateQueryCacheKey(query(variables));
   const [state, setState] = useUpdatableState({
@@ -90,7 +95,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
       setState({ loading: true, error: undefined });
 
       // @TODO this promise should be cancellable
-      API[domain][action](options)
+      API[domain][action](options, { fetchAll })
         .then((response: Response) => {
           store.dispatch(
             querySuccess({
