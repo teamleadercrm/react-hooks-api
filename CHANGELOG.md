@@ -1,3 +1,9 @@
+## Unreleased
+
+## ♻️ Changed
+
+* [INTERNAL] Replace deprecated tslint with eslint ([ArnaudWeyts](https://github.com/ArnaudWeyts) in [#194](https://github.com/teamleadercrm/react-hooks-api/pull/194))
+
 ## [0.1.0-rc7] - 2020-01-13
 
 ### ✨Added
