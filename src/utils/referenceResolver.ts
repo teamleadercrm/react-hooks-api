@@ -33,7 +33,7 @@ const isRelationship = (item: object) => {
     return false;
   }
 
-  return item.hasOwnProperty('type') && item.hasOwnProperty('id');
+  return Object.prototype.hasOwnProperty.call(item, 'type') && Object.prototype.hasOwnProperty.call(item, 'id');
 };
 
 const isListOfRelationships = (item: object | object[]) => {
