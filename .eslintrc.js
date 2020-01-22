@@ -1,5 +1,8 @@
 module.exports = {
   root: true,
+  env: {
+    browser: true
+  },
   parser: '@typescript-eslint/parser',
   plugins: [
     '@typescript-eslint'
@@ -11,4 +14,22 @@ module.exports = {
     'prettier/@typescript-eslint'
   ],
   ignorePatterns: ['lib/', 'node_modules/'],
+  overrides: [
+    {
+      files: ["*.spec.*"],
+      env: {
+        jest: true,
+        es6: true
+      },
+      rules: {
+        "@typescript-eslint/camelcase": ["error", { "properties": "never" }]
+      }
+    },
+    {
+      files: ['jest.config.js'],
+      env: {
+        node: true
+      }
+    }
+  ]
 }
