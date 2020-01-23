@@ -271,5 +271,29 @@ describe('Entities selectors', () => {
 
       expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(result);
     });
+
+    it('Does not crash when the referenced entity type is not in the entities state', () => {
+      const entitiesState = {};
+
+      const mainEntity = {
+        id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
+        assignee: {
+          type: 'team',
+          id: '708c8008-3455-49a9-b66a-5222bcadb0cc'
+        },
+      };
+
+      const paths = ['assignee'];
+
+      const result = {
+        id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
+        assignee: {
+          type: 'team',
+          id: '708c8008-3455-49a9-b66a-5222bcadb0cc'
+        },
+      };
+
+      expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(result);
+    })
   });
 });
