@@ -1,6 +1,10 @@
 ## Unreleased
 
-## ♻️ Changed
+### 🐛 Fixed
+
+* Fix error when trying to merge entity types that were not present in the store ([ArnaudWeyts](https://github.com/ArnaudWeyts) in [#196](https://github.com/teamleadercrm/react-hooks-api/pull/196))
+
+### ♻️ Changed
 
 * [INTERNAL] Replace deprecated tslint with eslint ([ArnaudWeyts](https://github.com/ArnaudWeyts) in [#194](https://github.com/teamleadercrm/react-hooks-api/pull/194))
 
