@@ -1,3 +1,5 @@
+## [0.1.0-rc9] - 2020-01-28
+
 ### 🐛 Fixed
 
 * Fix error when trying to merge array references that can be `null` ([ArnaudWeyts](https://github.com/ArnaudWeyts) in [#204](https://github.com/teamleadercrm/react-hooks-api/pull/204))
