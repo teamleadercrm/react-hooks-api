@@ -295,5 +295,26 @@ describe('Entities selectors', () => {
 
       expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(result);
     })
+
+    it('Does not crash when the entity reference is optional (null)', () => {
+      const entitiesState = {};
+
+      const mainEntity = {
+        id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
+        customFields: [
+          {
+            value: null,
+            definition: {
+              type: 'definition',
+              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821'
+            }
+          }
+        ],
+      };
+
+      const paths = ['customFields.value'];
+
+      expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(mainEntity);
+    })
   });
 });
