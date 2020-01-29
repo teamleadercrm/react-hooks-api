@@ -316,5 +316,40 @@ describe('Entities selectors', () => {
 
       expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(mainEntity);
     })
+
+    it('Does not crash when the entity reference is a primitive value', () => {
+      const entitiesState = {};
+
+      const mainEntity = {
+        id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
+        customFields: [
+          {
+            value: true,
+            definition: {
+              type: 'definition',
+              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821'
+            }
+          },
+          {
+            value: 'lol',
+            definition: {
+              type: 'definition',
+              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821'
+            }
+          },
+          {
+            value: 1,
+            definition: {
+              type: 'definition',
+              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821'
+            }
+          }
+        ],
+      };
+
+      const paths = ['customFields.value'];
+
+      expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(mainEntity);
+    })
   });
 });

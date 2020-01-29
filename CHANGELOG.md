@@ -1,3 +1,7 @@
+### 🐛 Fixed
+
+* Fix error when resolving primitive values ([ArnaudWeyts](https://github.com/ArnaudWeyts) in [#207](https://github.com/teamleadercrm/react-hooks-api/pull/207))
+
 ## [0.1.0-rc9] - 2020-01-28
 
 ### 🐛 Fixed
