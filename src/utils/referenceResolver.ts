@@ -6,7 +6,8 @@ const resolveForCondition = (condition: (item: object | object[]) => boolean) =>
   try {
     const item = object[keys[0]];
 
-    if (item === null) {
+    // Item isn't an object, no point in digging deeper
+    if (item === null || typeof item !== 'object') {
       return null;
     }
 
