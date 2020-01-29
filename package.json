@@ -1,6 +1,6 @@
 {
   "name": "@teamleader/react-hooks-api",
-  "version": "0.1.0-rc9",
+  "version": "0.1.0-rc10",
   "description": "React hooks for the Teamleader API",
   "main": "./lib/bundle.cjs.js",
   "module": "./lib/bundle.esm.js",
