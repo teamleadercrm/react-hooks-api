@@ -351,5 +351,25 @@ describe('Entities selectors', () => {
 
       expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(mainEntity);
     })
+
+    it('Does not erase paths that are not references', () => {
+      const entities = {};
+      const mainEntity = {
+        id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
+        customFields: [
+          {
+            value: ['An option', 'Another option'],
+            definition: {
+              type: 'definition',
+              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821'
+            }
+          }
+        ],
+      };
+
+      const paths = ['customFields.value'];
+
+      expect((mergeEntitiesIntoPaths(entities, paths, mainEntity) as any).customFields[0].value).toEqual(['An option', 'Another option']);
+    })
   });
 });

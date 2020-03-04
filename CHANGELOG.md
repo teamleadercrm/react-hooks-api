@@ -1,3 +1,9 @@
+## [unreleased]
+
+### 🐛 Fixed
+
+* Fix a bug when automatically merging side-loaded entities causing problems with unconventional paths ([ArnaudWeyts](https://github.com/ArnaudWeyts) in [#245](https://github.com/teamleadercrm/react-hooks-api/pull/245))
+
 ## [0.1.0-rc11] - 2020-01-29
 
 This version is a republish of a version 0.1.0-rc10 because the wrong version was published under that tag.
