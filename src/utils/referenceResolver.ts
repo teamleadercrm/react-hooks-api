@@ -15,15 +15,22 @@ const resolveForCondition = (condition: (item: object | object[]) => boolean) =>
       return item;
     }
 
+    const nextKeys = keys.filter((_, index) => index !== 0);
+
+    // No more paths to look for, we've run out of keys
+    if (nextKeys.length === 0) {
+      return null;
+    }
+
     // if the item is an array, we need to dig deeper for possible references
     if (Array.isArray(item)) {
       return item.map(arrayItem =>
-        resolveForCondition(condition)(arrayItem, keys.filter((_, index) => index !== 0))
+        resolveForCondition(condition)(arrayItem, nextKeys)
       );
     }
 
     // remove first key from array, we've checked it, keep digging deeper
-    return resolveForCondition(condition)(item, keys.filter((_, index) => index !== 0));
+    return resolveForCondition(condition)(item, nextKeys);
   } catch (exception) {
     throw new Error("Couldn't resolve path for object");
   }
