@@ -52,7 +52,7 @@
     "react-test-renderer": "^16.9.0",
     "redux": "^4.0.1",
     "redux-mock-store": "^1.5.3",
-    "rollup": "^1.12.3",
+    "rollup": "^2.0.0",
     "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-node-resolve": "^5.0.0",
     "rollup-plugin-typescript2": "^0.26.0",
