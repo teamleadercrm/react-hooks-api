@@ -11,6 +11,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "format": "prettier --write src/**/*",
     "prepublish": "npm run build"
   },
   "repository": {
