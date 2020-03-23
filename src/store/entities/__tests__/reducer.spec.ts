@@ -60,14 +60,16 @@ describe('Entities reducer', () => {
 
   it('merges new properties of entities into existing entities', () => {
     const INITIAL_STATE = getInitialState({
-      projects: { '708c8008-3455-49a9-b66a-5222bcadb0cc': { id: '708c8008-3455-49a9-b66a-5222bcadb0cc', oldProperty: 'test' } },
+      projects: {
+        '708c8008-3455-49a9-b66a-5222bcadb0cc': { id: '708c8008-3455-49a9-b66a-5222bcadb0cc', oldProperty: 'test' },
+      },
     });
 
     const type = 'projects';
     const entities = {
       '708c8008-3455-49a9-b66a-5222bcadb0cc': {
         id: '708c8008-3455-49a9-b66a-5222bcadb0cc',
-        newProperty: 'test'
+        newProperty: 'test',
       },
     };
 
@@ -76,11 +78,11 @@ describe('Entities reducer', () => {
         '708c8008-3455-49a9-b66a-5222bcadb0cc': {
           id: '708c8008-3455-49a9-b66a-5222bcadb0cc',
           oldProperty: 'test',
-          newProperty: 'test'
+          newProperty: 'test',
         },
       },
     };
 
     expect(reducer(INITIAL_STATE, saveNormalizedEntities({ type, entities }))).toEqual(RESULT_STATE);
-  })
+  });
 });

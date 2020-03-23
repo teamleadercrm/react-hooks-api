@@ -15,8 +15,8 @@ import resolveReferences, { convertPathToKeys } from '../../utils/referenceResol
  * Returns a new, non-mutated entity object
  */
 export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[], entity: Entity) => {
-  return produce(entity, draftEntity => {
-    paths.forEach(path => {
+  return produce(entity, (draftEntity) => {
+    paths.forEach((path) => {
       const keys = convertPathToKeys(path).map(camelCase);
       const sideloadReference = resolveReferences(entity, keys);
 
@@ -34,7 +34,7 @@ export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[],
           // find a way to support every nesting type
           const referencePath = `${keys[0]}.${index}.${keys[1]}`;
 
-          set(draftEntity, referencePath, { ...reference, ...sideloadedEntity })
+          set(draftEntity, referencePath, { ...reference, ...sideloadedEntity });
         });
 
         return;
@@ -48,7 +48,7 @@ export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[],
 
       set(draftEntity, path.split('.').map(camelCase).join('.'), { ...sideloadReference, ...sideloadedEntity });
     });
-  })
+  });
 };
 
 export const selectMergedEntities = (state: State, { key }: { key: string }) => {
@@ -76,12 +76,12 @@ export const selectMergedEntities = (state: State, { key }: { key: string }) => 
     return entity;
   }
 
-  const entities = data || ids.map(id => state.entities[domain][id]);
+  const entities = data || ids.map((id) => state.entities[domain][id]);
 
   if (include) {
     const entityPaths = include.split(',');
 
-    const entitiesWithIncludedEntities = entities.map(entity => {
+    const entitiesWithIncludedEntities = entities.map((entity) => {
       return mergeEntitiesIntoPaths(state.entities, entityPaths, entity);
     });
 

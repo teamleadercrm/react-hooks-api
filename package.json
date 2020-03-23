@@ -11,6 +11,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "format": "prettier --write src/**/*",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -45,7 +46,7 @@
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.9.0",
     "jest": "^25.1.0",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-redux": "^7.0.0",

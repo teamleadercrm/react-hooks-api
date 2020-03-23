@@ -62,7 +62,7 @@ describe('Queries reducer', () => {
     const key = 'unique key';
     const ids = ['testid123'];
     const meta = { 'some meta key': 'some meta information' };
-    const data = { 'some data key': 'some data' }
+    const data = { 'some data key': 'some data' };
 
     const RESULT_STATE = {
       'unique key': {

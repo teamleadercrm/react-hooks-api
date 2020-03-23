@@ -24,9 +24,7 @@ const resolveForCondition = (condition: (item: object | object[]) => boolean) =>
 
     // if the item is an array, we need to dig deeper for possible references
     if (Array.isArray(item)) {
-      return item.map(arrayItem =>
-        resolveForCondition(condition)(arrayItem, nextKeys)
-      );
+      return item.map((arrayItem) => resolveForCondition(condition)(arrayItem, nextKeys));
     }
 
     // remove first key from array, we've checked it, keep digging deeper
@@ -52,7 +50,7 @@ const isListOfRelationships = (item: object | object[]) => {
   return isRelationship(item[0]);
 };
 
-const resolveReferences = resolveForCondition(item => isListOfRelationships(item) || isRelationship(item));
+const resolveReferences = resolveForCondition((item) => isListOfRelationships(item) || isRelationship(item));
 
 export { convertPathToKeys };
 export default resolveReferences;

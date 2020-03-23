@@ -36,14 +36,14 @@ const registerQuery = (query: { fetch: () => void } | undefined, fetch: () => vo
       fetch: () => {
         query.fetch();
         fetch();
-      }
-    }
+      },
+    };
   }
 
   return {
-    fetch
-  }
-}
+    fetch,
+  };
+};
 
 const defaultConfig = {
   ignoreCache: false,
@@ -53,10 +53,7 @@ const defaultConfig = {
 const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   query,
   variables,
-  {
-    ignoreCache = defaultConfig.ignoreCache,
-    fetchAll = defaultConfig.fetchAll
-  } = defaultConfig,
+  { ignoreCache = defaultConfig.ignoreCache, fetchAll = defaultConfig.fetchAll } = defaultConfig,
 ) => {
   const queryKey = generateQueryCacheKey(query(variables));
   const [state, setState] = useUpdatableState({
@@ -100,7 +97,9 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
           store.dispatch(
             querySuccess({
               key,
-              ...(isEntityAction && { ids: Array.isArray(response.data) ? response.data.map(entity => entity.id) : response.data.id }),
+              ...(isEntityAction && {
+                ids: Array.isArray(response.data) ? response.data.map((entity) => entity.id) : response.data.id,
+              }),
               ...(!isEntityAction && { data: response.data }),
               meta: response.meta,
             }),
@@ -112,7 +111,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
           }
 
           if (response.included) {
-            Object.keys(response.included).forEach(entityType => {
+            Object.keys(response.included).forEach((entityType) => {
               const normalizedEntities = normalize(response.included[entityType]);
               const domainFromType = TYPE_DOMAIN_MAPPING[entityType];
               store.dispatch(saveNormalizedEntities({ type: domainFromType, entities: normalizedEntities }));
@@ -129,7 +128,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
             error: undefined,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           store.dispatch(queryFailure({ key, error }));
           setState({ loading: false, error });
         });
@@ -155,13 +154,13 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   );
 
   /*
-  * Register the query in a global object
-  * @TODO this should probably be set in the store instead
-  * so we don't pollute the global scope, but for now, it doesn't hurt
-  */
+   * Register the query in a global object
+   * @TODO this should probably be set in the store instead
+   * so we don't pollute the global scope, but for now, it doesn't hurt
+   */
   useEffect(() => {
-    queries[queryKey] = registerQuery(queries[queryKey], () => fetchMore({ variables }))
-  }, [queryKey])
+    queries[queryKey] = registerQuery(queries[queryKey], () => fetchMore({ variables }));
+  }, [queryKey]);
 
   return { ...state, fetchMore };
 };

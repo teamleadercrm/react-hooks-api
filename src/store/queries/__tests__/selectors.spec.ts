@@ -10,8 +10,8 @@ describe('queries selectors', () => {
           matches: 2,
         },
         data: {
-          groupedBy: 'participant'
-        }
+          groupedBy: 'participant',
+        },
       },
     },
   };
@@ -20,9 +20,11 @@ describe('queries selectors', () => {
     const query = selectQuery(INITIAL_STATE, 'uniqueKey');
 
     expect(query).toEqual({
-      loading: false, meta: { matches: 2 }, data: {
-        groupedBy: 'participant'
-      }
+      loading: false,
+      meta: { matches: 2 },
+      data: {
+        groupedBy: 'participant',
+      },
     });
   });
 
