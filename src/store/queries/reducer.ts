@@ -9,7 +9,7 @@ export type State = DeepReadonly<{
     loading: boolean;
     error?: Error;
     ids?: string | string[];
-    data?: any,
+    data?: any;
     meta?: any;
   };
 }>;

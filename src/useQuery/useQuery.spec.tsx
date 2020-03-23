@@ -16,7 +16,7 @@ import { State } from '../store/reducer';
 const mockAPI = {
   users: {
     // a list request will always resolve
-    list: options => {
+    list: (options) => {
       return new Promise((resolve, reject) => {
         if (options && options.page === 2) {
           resolve({ data: [{ id: 'e57a6047-cb52-4273-9df7-1d55c2c6e36d' }] });
@@ -26,7 +26,7 @@ const mockAPI = {
         });
       });
     },
-    info: options => {
+    info: (options) => {
       // an info request will reject
       return new Promise((resolve, reject) => {
         const error = new Error('API-Error');
@@ -35,28 +35,26 @@ const mockAPI = {
     },
   },
   projects: {
-    list: jest.fn()
+    list: jest.fn(),
   },
   projectItems: {
     report: () => {
       return new Promise((resolve) => {
-        resolve(
-          {
-            data: [
-              {
-                billable_amount: { "amount": 63.05, "currency": "EUR" },
-                cost: { "amount": 100, "currency": "EUR" },
-                result: { "amount": -36.95, "currency": "EUR" },
-                type: "tracked_time",
-                quantity: 1,
-                unit: "hour"
-              }
-            ]
-          }
-        )
-      })
-    }
-  }
+        resolve({
+          data: [
+            {
+              billable_amount: { amount: 63.05, currency: 'EUR' },
+              cost: { amount: 100, currency: 'EUR' },
+              result: { amount: -36.95, currency: 'EUR' },
+              type: 'tracked_time',
+              quantity: 1,
+              unit: 'hour',
+            },
+          ],
+        });
+      });
+    },
+  },
 };
 
 const initialMockState: State = {
@@ -204,7 +202,7 @@ describe('useQuery', () => {
   it('should save the data on a query level when the action is not "info" or "list"', async () => {
     const QUERY = () => ({
       domain: 'projectItems',
-      action: 'report'
+      action: 'report',
     });
 
     const key = generateQueryCacheKey(QUERY());
@@ -212,14 +210,16 @@ describe('useQuery', () => {
     let state = { ...initialMockState };
     const store = configureStore([])(() => state);
 
-    const data = [{
-      billable_amount: { "amount": 63.05, "currency": "EUR" },
-      cost: { "amount": 100, "currency": "EUR" },
-      result: { "amount": -36.95, "currency": "EUR" },
-      type: "tracked_time",
-      quantity: 1,
-      unit: "hour"
-    }];
+    const data = [
+      {
+        billable_amount: { amount: 63.05, currency: 'EUR' },
+        cost: { amount: 100, currency: 'EUR' },
+        result: { amount: -36.95, currency: 'EUR' },
+        type: 'tracked_time',
+        quantity: 1,
+        unit: 'hour',
+      },
+    ];
 
     const { waitForNextUpdate } = renderHook(() => useQuery(QUERY), { wrapper: StoreWrapper(store) });
 
@@ -229,8 +229,8 @@ describe('useQuery', () => {
         [key]: {
           loading: false,
           data,
-        }
-      }
+        },
+      },
     };
 
     await waitForNextUpdate();
@@ -238,7 +238,7 @@ describe('useQuery', () => {
     const actions = [
       querySuccess({
         key,
-        data
+        data,
       }),
     ];
 
@@ -247,7 +247,7 @@ describe('useQuery', () => {
     allActions.shift();
 
     expect(allActions).toEqual(actions);
-  })
+  });
 
   it('should return the error if the API request fails', async () => {
     const QUERY = () => ({
@@ -301,7 +301,6 @@ describe('useQuery', () => {
     });
 
     await waitForNextUpdate();
-
 
     act(() => {
       rerender({ query: SUCCESS_QUERY });
@@ -392,22 +391,24 @@ describe('useQuery', () => {
       entities: {
         projects: {
           'e57a6047-cb52-4273-9df7-1d55c2c6e36d': {
-            'key': 'cached'
-          }
-        }
+            key: 'cached',
+          },
+        },
       },
       queries: {
         [storeKey]: {
-          ids: ['e57a6047-cb52-4273-9df7-1d55c2c6e36d']
-        }
-      }
+          ids: ['e57a6047-cb52-4273-9df7-1d55c2c6e36d'],
+        },
+      },
     });
 
-    mockAPI.projects.list.mockReturnValueOnce(new Promise((resolve) => {
-      resolve({
-        data: []
-      })
-    }));
+    mockAPI.projects.list.mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolve({
+          data: [],
+        });
+      }),
+    );
 
     const { result, waitForNextUpdate } = renderHook(() => useQuery(QUERY, {}, { ignoreCache: true }), {
       wrapper: StoreWrapper(store),

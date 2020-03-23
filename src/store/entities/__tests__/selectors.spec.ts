@@ -205,7 +205,7 @@ describe('Entities selectors', () => {
               participant: {
                 type: 'user',
                 id: '2e46d7f5-6e9f-4d64-af13-c32cb6f72625',
-                name: "John Wick",
+                name: 'John Wick',
               },
             },
           ],
@@ -217,7 +217,7 @@ describe('Entities selectors', () => {
               participant: {
                 type: 'user',
                 id: '2e46d7f5-6e9f-4d64-af13-c32cb6f72625',
-                name: "John Wick",
+                name: 'John Wick',
               },
             },
             {
@@ -279,7 +279,7 @@ describe('Entities selectors', () => {
         id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
         assignee: {
           type: 'team',
-          id: '708c8008-3455-49a9-b66a-5222bcadb0cc'
+          id: '708c8008-3455-49a9-b66a-5222bcadb0cc',
         },
       };
 
@@ -289,12 +289,12 @@ describe('Entities selectors', () => {
         id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
         assignee: {
           type: 'team',
-          id: '708c8008-3455-49a9-b66a-5222bcadb0cc'
+          id: '708c8008-3455-49a9-b66a-5222bcadb0cc',
         },
       };
 
       expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(result);
-    })
+    });
 
     it('Does not crash when the entity reference is optional (null)', () => {
       const entitiesState = {};
@@ -306,16 +306,16 @@ describe('Entities selectors', () => {
             value: null,
             definition: {
               type: 'definition',
-              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821'
-            }
-          }
+              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821',
+            },
+          },
         ],
       };
 
       const paths = ['customFields.value'];
 
       expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(mainEntity);
-    })
+    });
 
     it('Does not crash when the entity reference is a primitive value', () => {
       const entitiesState = {};
@@ -327,30 +327,30 @@ describe('Entities selectors', () => {
             value: true,
             definition: {
               type: 'definition',
-              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821'
-            }
+              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821',
+            },
           },
           {
             value: 'lol',
             definition: {
               type: 'definition',
-              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821'
-            }
+              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821',
+            },
           },
           {
             value: 1,
             definition: {
               type: 'definition',
-              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821'
-            }
-          }
+              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821',
+            },
+          },
         ],
       };
 
       const paths = ['customFields.value'];
 
       expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(mainEntity);
-    })
+    });
 
     it('Does not erase paths that are not references', () => {
       const entities = {};
@@ -361,15 +361,18 @@ describe('Entities selectors', () => {
             value: ['An option', 'Another option'],
             definition: {
               type: 'definition',
-              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821'
-            }
-          }
+              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821',
+            },
+          },
         ],
       };
 
       const paths = ['customFields.value'];
 
-      expect((mergeEntitiesIntoPaths(entities, paths, mainEntity) as any).customFields[0].value).toEqual(['An option', 'Another option']);
-    })
+      expect((mergeEntitiesIntoPaths(entities, paths, mainEntity) as any).customFields[0].value).toEqual([
+        'An option',
+        'Another option',
+      ]);
+    });
   });
 });

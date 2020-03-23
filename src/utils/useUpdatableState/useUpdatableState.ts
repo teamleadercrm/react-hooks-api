@@ -9,7 +9,7 @@ const useUpdatableState = <State extends object, Update = Partial<State> | ((pre
 ): [State, (update: Update) => void] => {
   const [state, set] = useState(initialState);
   const setState = (update: Update) => {
-    set(prevState => Object.assign({}, prevState, update instanceof Function ? update(prevState) : update));
+    set((prevState) => Object.assign({}, prevState, update instanceof Function ? update(prevState) : update));
   };
 
   return [state, setState];
