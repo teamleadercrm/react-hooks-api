@@ -126,7 +126,7 @@ describe('useQuery', () => {
 
     const key = generateQueryCacheKey({ domain: 'users', action: 'list' });
 
-    const action = queryRequest({ key });
+    const action = queryRequest({ key, APIContext: {} });
 
     expect(store.getActions()).toEqual([action]);
   });

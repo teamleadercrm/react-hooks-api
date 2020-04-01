@@ -21,7 +21,7 @@ describe('Queries reducer', () => {
         },
       };
 
-      expect(reducer(INITIAL_STATE, queryRequest({ key }))).toEqual(RESULT_STATE);
+      expect(reducer(INITIAL_STATE, queryRequest({ key, APIContext: {} }))).toEqual(RESULT_STATE);
     });
 
     it('does not overwrite a current query that already contained data', () => {
@@ -36,7 +36,7 @@ describe('Queries reducer', () => {
         },
       };
 
-      expect(reducer(INITIAL_STATE, queryRequest({ key }))).toEqual(RESULT_STATE);
+      expect(reducer(INITIAL_STATE, queryRequest({ key, APIContext: {} }))).toEqual(RESULT_STATE);
     });
   });
 
