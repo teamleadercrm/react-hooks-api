@@ -1,7 +1,8 @@
-import { selectQueries, selectLoadingFromQueryFactory, selectMetaFromQueryFactory, selectQueryByKey, selectLoadingFromQueryWithUpdateQueriesFactory } from '../selectors';
+import { selectQueries, selectLoadingFromQueryFactory, selectMetaFromQueryFactory, selectQueryByKey, selectLoadingFromQueryWithUpdateQueriesFactory, selectIdsFromQuery, selectDomainNameFromQuery } from '../selectors';
+import generateQueryCacheKey from '../../../utils/generateQueryCacheKey';
 
 describe('queries selectors', () => {
-  const INITIAL_STATE = {
+  const INITIAL_STATE: any = {
     entities: {},
     queries: {
       uniqueKey: {
@@ -68,5 +69,26 @@ describe('queries selectors', () => {
     const loading = selectLoadingFromQueryWithUpdateQueries(INITIAL_STATE, 'uniqueKey', ['uniqueKey2']);
 
     expect(loading).toBeTruthy();
+  })
+
+  it('selects the ids from a query', () => {
+    INITIAL_STATE.queries = {
+      uniqueKey3: {
+        loading: false,
+        ids: ['id1', 'id2'],
+      },
+    };
+    const ids = selectIdsFromQuery(INITIAL_STATE, 'uniqueKey3');
+    expect(ids).toEqual(['id1', 'id2']);
+  });
+
+  it('selects the domain of a query', () => {
+    const key = generateQueryCacheKey({ domain: 'projects' });
+    INITIAL_STATE.queries = {
+      [key]: {},
+    };
+
+    const domain = selectDomainNameFromQuery(INITIAL_STATE, key);
+    expect(domain).toEqual('projects');
   })
 });
