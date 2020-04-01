@@ -1,4 +1,10 @@
-import { selectEntities, selectDomainFromQuery, selectEntitiesFromQueryFactory } from '../selectors';
+import {
+  selectEntities,
+  selectDomainFromQuery,
+  selectEntitiesFromQueryFactory,
+  selectEntityByDomainAndIdFactory,
+  selectEntitiesByDomainAndIdsFactory,
+} from '../selectors';
 import generateQueryCacheKey from '../../../utils/generateQueryCacheKey';
 
 describe('Entities selectors', () => {
@@ -99,6 +105,65 @@ describe('Entities selectors', () => {
       };
 
       expect(selectEntitiesFromQuery(state, key)).toEqual([
+        {
+          id: '5e22ba6c-c3e6-4503-8cf7-1ac82629f65c',
+          name: 'a project',
+        },
+        {
+          id: '840958a7-b448-45be-9400-c90da58073ee',
+          name: 'a project',
+        },
+      ]);
+    });
+  });
+
+  describe('selectEntityByDomainAndIdFactory', () => {
+    const selectEntityByDomainAndId = selectEntityByDomainAndIdFactory();
+
+    it('selects an entity based on a domain and id', () => {
+      const state = {
+        entities: {
+          projects: {
+            '5e22ba6c-c3e6-4503-8cf7-1ac82629f65c': {
+              id: '5e22ba6c-c3e6-4503-8cf7-1ac82629f65c',
+              name: 'a project',
+            },
+          },
+        },
+      };
+
+      expect(selectEntityByDomainAndId(state, 'projects', '5e22ba6c-c3e6-4503-8cf7-1ac82629f65c')).toEqual({
+        id: '5e22ba6c-c3e6-4503-8cf7-1ac82629f65c',
+        name: 'a project',
+      });
+    });
+  });
+
+  describe('selectEntitiesByDomainAndIdsFactory', () => {
+    const selectEntitiesByDomainAndIds = selectEntitiesByDomainAndIdsFactory();
+
+    it('selects an entity based on a domain and id', () => {
+      const state = {
+        entities: {
+          projects: {
+            '5e22ba6c-c3e6-4503-8cf7-1ac82629f65c': {
+              id: '5e22ba6c-c3e6-4503-8cf7-1ac82629f65c',
+              name: 'a project',
+            },
+            '840958a7-b448-45be-9400-c90da58073ee': {
+              id: '840958a7-b448-45be-9400-c90da58073ee',
+              name: 'a project',
+            },
+          },
+        },
+      };
+
+      expect(
+        selectEntitiesByDomainAndIds(state, 'projects', [
+          '5e22ba6c-c3e6-4503-8cf7-1ac82629f65c',
+          '840958a7-b448-45be-9400-c90da58073ee',
+        ]),
+      ).toEqual([
         {
           id: '5e22ba6c-c3e6-4503-8cf7-1ac82629f65c',
           name: 'a project',
