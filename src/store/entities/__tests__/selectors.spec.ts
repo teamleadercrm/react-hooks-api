@@ -56,6 +56,20 @@ describe('Entities selectors', () => {
       },
     };
 
+    it('selects the data from the query if there is any', () => {
+      const key = generateQueryCacheKey({ domain: 'projects' });
+      const state = {
+        ...STATE,
+        queries: {
+          [key]: {
+            data: 'some unconventional entity data, e.g. reporting endpoints',
+          },
+        },
+      };
+
+      expect(selectEntitiesFromQuery(state, key)).toEqual('some unconventional entity data, e.g. reporting endpoints');
+    });
+
     it('selects a single entity from the store based on a query', () => {
       const key = generateQueryCacheKey({ domain: 'projects' });
       const state = {
