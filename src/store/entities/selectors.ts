@@ -21,6 +21,8 @@ export const selectDomainFromQuery = createSelector(
   (domainName, entities) => entities[domainName],
 );
 
+// Factories
+
 export const selectEntitiesFromQueryFactory = () =>
   createSelectorWithResultArrayMemoization(
     selectDataFromQuery,
@@ -41,4 +43,20 @@ export const selectEntitiesFromQueryFactory = () =>
 
       return domain[ids];
     },
+  );
+
+export const selectEntityByDomainAndIdFactory = () =>
+  createSelector(
+    (_, domain) => domain,
+    (_, __, id) => id,
+    selectEntities,
+    (domain, id, entities) => entities[domain]?.[id],
+  );
+
+export const selectEntitiesByDomainAndIdsFactory = () =>
+  createSelectorWithResultArrayMemoization(
+    (_, domain) => domain,
+    (_, __, ids) => ids,
+    selectEntities,
+    (domain, ids, entities) => ids.map((id) => entities[domain]?.[id]),
   );
