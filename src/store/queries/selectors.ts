@@ -17,6 +17,10 @@ export const selectDomainNameFromQuery = createSelector(
   (key) => decodeQueryCacheKey(key).domain,
 );
 
+export const selectDataFromQuery = createSelector(selectQueryByKey, (query) => query && query.data);
+
+// Factories
+
 export const selectLoadingFromQueryFactory = () => createSelector(
   selectQueryByKey,
   (query) => query && query.loading || false
