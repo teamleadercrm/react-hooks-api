@@ -1,6 +1,6 @@
 import { createSelector, createSelectorCreator } from 'reselect';
 import { State } from '../reducer';
-import { selectIdsFromQuery, selectDomainNameFromQuery } from '../queries/selectors';
+import { selectIdsFromQuery, selectDomainNameFromQuery, selectDataFromQuery } from '../queries/selectors';
 import { memoizeWithResultArrayEntryShallowCheck } from './memoizeWithResultArrayEntryShallowCheck';
 
 /**
@@ -22,14 +22,23 @@ export const selectDomainFromQuery = createSelector(
 );
 
 export const selectEntitiesFromQueryFactory = () =>
-  createSelectorWithResultArrayMemoization(selectIdsFromQuery, selectDomainFromQuery, (ids, domain) => {
-    if (!ids) {
-      return null;
-    }
+  createSelectorWithResultArrayMemoization(
+    selectDataFromQuery,
+    selectIdsFromQuery,
+    selectDomainFromQuery,
+    (queryData, ids, domain) => {
+      if (queryData) {
+        return queryData;
+      }
 
-    if (Array.isArray(ids)) {
-      return ids.map((id) => domain[id]);
-    }
+      if (!ids) {
+        return null;
+      }
 
-    return domain[ids];
-  });
+      if (Array.isArray(ids)) {
+        return ids.map((id) => domain[id]);
+      }
+
+      return domain[ids];
+    },
+  );
