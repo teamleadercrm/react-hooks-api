@@ -5,7 +5,7 @@ import generateQueryCacheKey from '../utils/generateQueryCacheKey';
 import { queryRequest } from '../store/queries/actions';
 import { useSelector, useDispatch } from '../store/CustomReduxContext';
 import Context from '../Context';
-import { selectMergedEntitiesFactory } from '../store/entities/selectors';
+import { selectEntitiesFromQueryFactory } from '../store/entities/selectors';
 import { selectLoadingFromQueryFactory, selectMetaFromQueryFactory } from '../store/queries/selectors';
 
 type CalculatedQuery = {
@@ -35,7 +35,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
 
   const API = useContext(Context);
   const selectLoading = useMemo(selectLoadingFromQueryFactory, []);
-  const selectData = useMemo(selectMergedEntitiesFactory, []);
+  const selectData = useMemo(selectEntitiesFromQueryFactory, []);
   const selectMeta = useMemo(selectMetaFromQueryFactory, []);
   const dispatch = useDispatch();
 
