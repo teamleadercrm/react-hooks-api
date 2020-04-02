@@ -54,7 +54,14 @@ export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[],
 
       sideloadedEntity = entities[TYPE_DOMAIN_MAPPING[sideloadReference.type]]?.[sideloadReference.id];
 
-      set(draftEntity, path.split('.').map(camelCase).join('.'), { ...sideloadReference, ...sideloadedEntity });
+      set(
+        draftEntity,
+        path
+          .split('.')
+          .map(camelCase)
+          .join('.'),
+        { ...sideloadReference, ...sideloadedEntity }
+      );
     });
   });
 };
@@ -100,7 +107,7 @@ export const selectMergedEntitiesFactory = () =>
       }
 
       return entitiesForQuery;
-    },
+    }
   );
 
 export const selectMergedEntitiesWithUpdateQueriesFactory = () =>
@@ -123,5 +130,5 @@ export const selectMergedEntitiesWithUpdateQueriesFactory = () =>
 
         return nextUpdateQuery({ previousData: updatedData, data: nextQueryResult });
       }, initialData);
-    },
+    }
   );

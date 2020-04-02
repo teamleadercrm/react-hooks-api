@@ -3,10 +3,7 @@ import Provider from './Provider';
 import decodeQueryCacheKey from './utils/decodeQueryCacheKey';
 import generateQueryCacheKey from './utils/generateQueryCacheKey';
 import { useSelector } from './store/CustomReduxContext';
-import {
-  selectEntityByDomainAndIdFactory,
-  selectEntitiesByDomainAndIdsFactory,
-} from './store/entities/selectors';
+import { selectEntityByDomainAndIdFactory, selectEntitiesByDomainAndIdsFactory } from './store/entities/selectors';
 
 export {
   queries,

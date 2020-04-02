@@ -49,7 +49,7 @@ const defaultConfig = {
 const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   query,
   variables,
-  { ignoreCache = defaultConfig.ignoreCache, fetchAll = defaultConfig.fetchAll }: Options = defaultConfig,
+  { ignoreCache = defaultConfig.ignoreCache, fetchAll = defaultConfig.fetchAll }: Options = defaultConfig
 ) => {
   const key = useMemo(() => generateQueryCacheKey(query(variables)), [variables]);
 
@@ -60,7 +60,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   const dispatch = useDispatch();
 
   const loading = useSelector((state: State) => selectLoading(state, key));
-  const data = useSelector(state => selectData(state, key));
+  const data = useSelector((state) => selectData(state, key));
   const meta = useSelector((state: State) => selectMeta(state, key));
 
   // Effect only runs when the result query (with variables) has changed
@@ -83,7 +83,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
       }
       dispatch(queryRequest({ key: generateQueryCacheKey(query(newVariables)), APIContext: API }));
     },
-    [key, ignoreCache, data],
+    [key, ignoreCache, data]
   );
 
   /*

@@ -408,7 +408,7 @@ describe('useQuery', () => {
         resolve({
           data: [],
         });
-      }),
+      })
     );
 
     const { result, waitForNextUpdate } = renderHook(() => useQuery(QUERY, {}, { ignoreCache: true }), {

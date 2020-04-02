@@ -452,7 +452,7 @@ describe('Entities selectors', () => {
       ];
 
       expect(
-        selectMergedEntitiesWithUpdateQueries(UPDATE_QUERIES_INITIAL_STATE, updateQueryKeys.initialKey, updateQueries),
+        selectMergedEntitiesWithUpdateQueries(UPDATE_QUERIES_INITIAL_STATE, updateQueryKeys.initialKey, updateQueries)
       ).toEqual(result);
     });
   });

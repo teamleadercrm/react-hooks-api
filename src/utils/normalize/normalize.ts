@@ -7,7 +7,7 @@ const normalize = (data: Entity | Entity[]) => {
         ...normalizedEntities,
         [entity.id]: entity,
       }),
-      {},
+      {}
     );
   }
 
