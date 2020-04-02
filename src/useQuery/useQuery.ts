@@ -78,9 +78,6 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   // @TODO refactor this so it works with our new redux flow
   const fetchMore = useCallback(
     ({ variables: newVariables, updateQuery }) => {
-      if (!ignoreCache && data) {
-        return;
-      }
       dispatch(queryRequest({ key: generateQueryCacheKey(query(newVariables)), APIContext: API }));
     },
     [key, ignoreCache, data]
