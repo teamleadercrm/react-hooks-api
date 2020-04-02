@@ -6,6 +6,51 @@
    - Selector factories (still some todos to be handled here)
    - Separate `fetcher` middleware
 
+## [0.1.0-rc12] - 04-03-2020
+
+### 🐛 Fixed
+
+* Fix a bug when automatically merging side-loaded entities causing problems with unconventional paths ([ArnaudWeyts](https://github.com/ArnaudWeyts) in [#245](https://github.com/teamleadercrm/react-hooks-api/pull/245))
+
+## [0.1.0-rc11] - 2020-01-29
+
+This version is a republish of a version 0.1.0-rc10 because the wrong version was published under that tag.
+
+## [0.1.0-rc10] - 2020-01-29
+
+### 🐛 Fixed
+
+* Fix error when resolving primitive values ([ArnaudWeyts](https://github.com/ArnaudWeyts) in [#207](https://github.com/teamleadercrm/react-hooks-api/pull/207))
+
+## [0.1.0-rc9] - 2020-01-28
+
+### 🐛 Fixed
+
+* Fix error when trying to merge array references that can be `null` ([ArnaudWeyts](https://github.com/ArnaudWeyts) in [#204](https://github.com/teamleadercrm/react-hooks-api/pull/204))
+
+## [0.1.0-rc8] - 2020-01-23
+
+### 🐛 Fixed
+
+* Fix error when trying to merge entity types that were not present in the store ([ArnaudWeyts](https://github.com/ArnaudWeyts) in [#196](https://github.com/teamleadercrm/react-hooks-api/pull/196))
+
+### ♻️ Changed
+
+* [INTERNAL] Replace deprecated tslint with eslint ([ArnaudWeyts](https://github.com/ArnaudWeyts) in [#194](https://github.com/teamleadercrm/react-hooks-api/pull/194))
+
+## [0.1.0-rc7] - 2020-01-13
+
+### ✨Added
+
+* Support `fetchAll` option from `@teamleader/api` ([ArnaudWeyts](https://github.com/ArnaudWeyts) in [#183](https://github.com/teamleadercrm/react-hooks-api/pull/183))
+
+
+## [0.1.0-rc6] - 2020-01-09
+
+### 🐛 Fixed
+
+* 🐛 Fix fetch call being overwritten when 2 identical queries get registered https://github.com/teamleadercrm/react-hooks-api/pull/180
+
 ## [0.1.0-rc5] - 2020-01-07
 
 ### 🐛 Fixed

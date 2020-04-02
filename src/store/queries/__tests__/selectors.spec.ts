@@ -11,8 +11,8 @@ describe('queries selectors', () => {
           matches: 2,
         },
         data: {
-          groupedBy: 'participant'
-        }
+          groupedBy: 'participant',
+        },
       },
       uniqueKey2: {
         loading: true,
@@ -43,9 +43,11 @@ describe('queries selectors', () => {
     const query = selectQueryByKey(INITIAL_STATE, 'uniqueKey');
 
     expect(query).toEqual({
-      loading: false, meta: { matches: 2 }, data: {
-        groupedBy: 'participant'
-      }
+      loading: false,
+      meta: { matches: 2 },
+      data: {
+        groupedBy: 'participant',
+      },
     });
   });
 

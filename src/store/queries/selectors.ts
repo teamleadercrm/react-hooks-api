@@ -23,7 +23,7 @@ export const selectDataFromQuery = createSelector(selectQueryByKey, (query) => q
 
 export const selectLoadingFromQueryFactory = () => createSelector(
   selectQueryByKey,
-  (query) => query && query.loading || false
+  (query) => query ? query.loading : true
 );
 
 export const selectMetaFromQueryFactory = () => createSelector(

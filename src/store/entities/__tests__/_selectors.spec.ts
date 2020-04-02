@@ -288,6 +288,109 @@ describe('Entities selectors', () => {
 
       expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(result);
     });
+
+    it('Does not crash when the referenced entity type is not in the entities state', () => {
+      const entitiesState = {};
+
+      const mainEntity = {
+        id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
+        assignee: {
+          type: 'team',
+          id: '708c8008-3455-49a9-b66a-5222bcadb0cc',
+        },
+      };
+
+      const paths = ['assignee'];
+
+      const result = {
+        id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
+        assignee: {
+          type: 'team',
+          id: '708c8008-3455-49a9-b66a-5222bcadb0cc',
+        },
+      };
+
+      expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(result);
+    });
+
+    it('Does not crash when the entity reference is optional (null)', () => {
+      const entitiesState = {};
+
+      const mainEntity = {
+        id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
+        customFields: [
+          {
+            value: null,
+            definition: {
+              type: 'definition',
+              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821',
+            },
+          },
+        ],
+      };
+
+      const paths = ['customFields.value'];
+
+      expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(mainEntity);
+    });
+
+    it('Does not crash when the entity reference is a primitive value', () => {
+      const entitiesState = {};
+
+      const mainEntity = {
+        id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
+        customFields: [
+          {
+            value: true,
+            definition: {
+              type: 'definition',
+              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821',
+            },
+          },
+          {
+            value: 'lol',
+            definition: {
+              type: 'definition',
+              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821',
+            },
+          },
+          {
+            value: 1,
+            definition: {
+              type: 'definition',
+              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821',
+            },
+          },
+        ],
+      };
+
+      const paths = ['customFields.value'];
+
+      expect(mergeEntitiesIntoPaths(entitiesState, paths, mainEntity)).toEqual(mainEntity);
+    });
+
+    it('Does not erase paths that are not references', () => {
+      const entities = {};
+      const mainEntity = {
+        id: 'e6538393-aa7e-4ec2-870b-f75b3d85f706',
+        customFields: [
+          {
+            value: ['An option', 'Another option'],
+            definition: {
+              type: 'definition',
+              id: '2b8861d8-7e25-49dd-9fec-f38f35f0d821',
+            },
+          },
+        ],
+      };
+
+      const paths = ['customFields.value'];
+
+      expect((mergeEntitiesIntoPaths(entities, paths, mainEntity) as any).customFields[0].value).toEqual([
+        'An option',
+        'Another option',
+      ]);
+    });
   });
 
   describe('selectMergedEntitiesWithUpdateQueries', () => {

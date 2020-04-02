@@ -17,19 +17,38 @@ type CalculatedQuery = {
 type Query = (variables?: any) => CalculatedQuery;
 
 type Options = {
-  ignoreCache: boolean;
+  ignoreCache?: boolean;
+  fetchAll?: boolean;
 };
 
 export const queries: Record<string, { fetch: () => void }> = {};
 
+const registerQuery = (query: { fetch: () => void } | undefined, fetch: () => void) => {
+  // A previous query has already been registered, hook up its fetch call as well
+  // @TODO once every query relies on the same redux state object, this can be removed
+  if (query) {
+    return {
+      fetch: () => {
+        query.fetch();
+        fetch();
+      },
+    };
+  }
+
+  return {
+    fetch,
+  };
+};
+
 const defaultConfig = {
   ignoreCache: false,
+  fetchAll: false,
 };
 
 const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   query,
   variables,
-  { ignoreCache = defaultConfig.ignoreCache } = defaultConfig,
+  { ignoreCache = defaultConfig.ignoreCache, fetchAll = defaultConfig.fetchAll } = defaultConfig,
 ) => {
   const key = useMemo(() => generateQueryCacheKey(query(variables)), [variables]);
 
@@ -67,14 +86,13 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   );
 
   /*
-  * Register the query in a global object
-  * @TODO this should probably be set in the store instead
-  * so we don't pollute the global scope, but for now, it doesn't hurt
-  */
-  queries[key] = {
-    // Function that can be called to refresh this specific query
-    fetch: () => fetchMore({ variables }),
-  }
+   * Register the query in a global object
+   * @TODO this should probably be set in the store instead
+   * so we don't pollute the global scope, but for now, it doesn't hurt
+   */
+  useEffect(() => {
+    queries[key] = registerQuery(queries[key], () => fetchMore({ variables }));
+  }, [key]);
 
   return { loading, data, meta, fetchMore };
 };

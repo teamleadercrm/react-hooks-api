@@ -28,15 +28,15 @@ export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[],
       const keys = convertPathToKeys(path).map(camelCase);
       const sideloadReference = resolveReferences(entity, keys);
 
-      if (sideloadReference === null) {
-        return;
-      }
-
       let sideloadedEntity = null;
 
       if (Array.isArray(sideloadReference)) {
         sideloadReference.forEach((reference, index) => {
-          sideloadedEntity = entities[TYPE_DOMAIN_MAPPING[reference.type]][reference.id];
+          if (reference === null) {
+            return;
+          }
+
+          sideloadedEntity = entities[TYPE_DOMAIN_MAPPING[reference.type]]?.[reference.id];
 
           // @TODO, hard coding the keys here means we only allow the first key to be an array of possible references
           // find a way to support every nesting type
@@ -48,7 +48,11 @@ export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[],
         return;
       }
 
-      sideloadedEntity = entities[TYPE_DOMAIN_MAPPING[sideloadReference.type]][sideloadReference.id];
+      if (sideloadReference === null) {
+        return;
+      }
+
+      sideloadedEntity = entities[TYPE_DOMAIN_MAPPING[sideloadReference.type]]?.[sideloadReference.id];
 
       set(draftEntity, path.split('.').map(camelCase).join('.'), { ...sideloadReference, ...sideloadedEntity });
     });
