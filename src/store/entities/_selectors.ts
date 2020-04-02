@@ -4,8 +4,8 @@
  */
 
 import produce from 'immer';
-import set from 'lodash.set';
-import camelCase from 'lodash.camelCase';
+import set from 'lodash/set';
+import camelCase from 'lodash/camelCase';
 import { createSelector } from 'reselect';
 
 import decodeQueryCacheKey from '../../utils/decodeQueryCacheKey';
