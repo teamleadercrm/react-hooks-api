@@ -1,92 +1,62 @@
-import produce from 'immer';
-import set from 'lodash.set';
-import camelCase from 'lodash.camelCase';
-
-import decodeQueryCacheKey from '../../utils/decodeQueryCacheKey';
-
+import { createSelector, createSelectorCreator } from 'reselect';
 import { State } from '../reducer';
-import { State as EntitiesState } from '../entities/reducer';
-import { Entity } from '../../typings/API';
-import { TYPE_DOMAIN_MAPPING } from './constants';
-import resolveReferences, { convertPathToKeys } from '../../utils/referenceResolver';
+import { selectIdsFromQuery, selectDomainNameFromQuery, selectDataFromQuery } from '../queries/selectors';
+import { memoizeWithResultArrayEntryShallowCheck } from './memoizeWithResultArrayEntryShallowCheck';
 
 /**
- * Helper function to merge entities into their respective paths
- * Returns a new, non-mutated entity object
+ * Creates a selector with array memoization support
+ * This way we check for the equality of each entry in an array
+ * instead of the array itself, which prevents re-renders
+ * https://github.com/reduxjs/reselect/issues/74#issuecomment-271762561
  */
-export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[], entity: Entity) => {
-  return produce(entity, (draftEntity) => {
-    paths.forEach((path) => {
-      const keys = convertPathToKeys(path).map(camelCase);
-      const sideloadReference = resolveReferences(entity, keys);
+// @TODO remove once the typing for createSelectorCreator is fixed
+// @ts-ignore
+const createSelectorWithResultArrayMemoization = createSelectorCreator(memoizeWithResultArrayEntryShallowCheck);
 
-      let sideloadedEntity = null;
+export const selectEntities = (state: State) => state.entities;
 
-      if (Array.isArray(sideloadReference)) {
-        sideloadReference.forEach((reference, index) => {
-          if (reference === null) {
-            return;
-          }
+export const selectDomainFromQuery = createSelector(
+  selectDomainNameFromQuery,
+  selectEntities,
+  (domainName, entities) => entities[domainName],
+);
 
-          sideloadedEntity = entities[TYPE_DOMAIN_MAPPING[reference.type]]?.[reference.id];
+// Factories
 
-          // @TODO, hard coding the keys here means we only allow the first key to be an array of possible references
-          // find a way to support every nesting type
-          const referencePath = `${keys[0]}.${index}.${keys[1]}`;
-
-          set(draftEntity, referencePath, { ...reference, ...sideloadedEntity });
-        });
-
-        return;
+export const selectEntitiesFromQueryFactory = () =>
+  createSelectorWithResultArrayMemoization(
+    selectDataFromQuery,
+    selectIdsFromQuery,
+    selectDomainFromQuery,
+    (queryData, ids, domain) => {
+      if (queryData) {
+        return queryData;
       }
 
-      if (sideloadReference === null) {
-        return;
+      if (!ids) {
+        return null;
       }
 
-      sideloadedEntity = entities[TYPE_DOMAIN_MAPPING[sideloadReference.type]]?.[sideloadReference.id];
+      if (Array.isArray(ids)) {
+        return ids.map((id) => domain[id]);
+      }
 
-      set(draftEntity, path.split('.').map(camelCase).join('.'), { ...sideloadReference, ...sideloadedEntity });
-    });
-  });
-};
+      return domain[ids];
+    },
+  );
 
-export const selectMergedEntities = (state: State, { key }: { key: string }) => {
-  const { ids, data } = state.queries[key];
+export const selectEntityByDomainAndIdFactory = () =>
+  createSelector(
+    (_, domain) => domain,
+    (_, __, id) => id,
+    selectEntities,
+    (domain, id, entities) => entities[domain]?.[id],
+  );
 
-  // Query hasn't finished loading yet
-  if (!ids && !data) {
-    return null;
-  }
-
-  const { domain, options } = decodeQueryCacheKey(key);
-
-  const include = options && options.include;
-
-  // single entity, aka .info request
-  if ((data && !Array.isArray(data)) || typeof ids === 'string') {
-    const entity = data || state.entities[domain][ids as string];
-
-    if (include) {
-      const entityPaths = include.split(',');
-
-      return mergeEntitiesIntoPaths(state.entities, entityPaths, entity);
-    }
-
-    return entity;
-  }
-
-  const entities = data || ids.map((id) => state.entities[domain][id]);
-
-  if (include) {
-    const entityPaths = include.split(',');
-
-    const entitiesWithIncludedEntities = entities.map((entity) => {
-      return mergeEntitiesIntoPaths(state.entities, entityPaths, entity);
-    });
-
-    return entitiesWithIncludedEntities;
-  }
-
-  return entities;
-};
+export const selectEntitiesByDomainAndIdsFactory = () =>
+  createSelectorWithResultArrayMemoization(
+    (_, domain) => domain,
+    (_, __, ids) => ids,
+    selectEntities,
+    (domain, ids, entities) => ids.map((id) => entities[domain]?.[id]),
+  );
