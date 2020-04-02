@@ -28,7 +28,7 @@ export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[],
       const keys = convertPathToKeys(path).map(camelCase);
       const sideloadReference = resolveReferences(entity, keys);
 
-      let sideloadedEntity = null;
+      let sideloadedEntity: Object | null = null;
 
       if (Array.isArray(sideloadReference)) {
         sideloadReference.forEach((reference, index) => {
@@ -94,7 +94,7 @@ export const selectMergedEntitiesFactory = () =>
         return entity;
       }
 
-      const entitiesForQuery = data || ids.map((id) => entities[domain][id]);
+      const entitiesForQuery = data || ids!.map((id) => entities[domain][id]);
 
       if (include) {
         const entityPaths = include.split(',');

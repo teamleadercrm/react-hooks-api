@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { Provider as ReactReduxProvider } from 'react-redux';
 import configureStore from 'redux-mock-store';
