@@ -4,8 +4,8 @@
  */
 
 import produce from 'immer';
-import set from 'lodash.set';
-import camelCase from 'lodash.camelCase';
+import set from 'lodash/set';
+import camelCase from 'lodash/camelCase';
 import { createSelector } from 'reselect';
 
 import decodeQueryCacheKey from '../../utils/decodeQueryCacheKey';
@@ -28,7 +28,7 @@ export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[],
       const keys = convertPathToKeys(path).map(camelCase);
       const sideloadReference = resolveReferences(entity, keys);
 
-      let sideloadedEntity = null;
+      let sideloadedEntity: Object | null = null;
 
       if (Array.isArray(sideloadReference)) {
         sideloadReference.forEach((reference, index) => {
@@ -54,7 +54,14 @@ export const mergeEntitiesIntoPaths = (entities: EntitiesState, paths: string[],
 
       sideloadedEntity = entities[TYPE_DOMAIN_MAPPING[sideloadReference.type]]?.[sideloadReference.id];
 
-      set(draftEntity, path.split('.').map(camelCase).join('.'), { ...sideloadReference, ...sideloadedEntity });
+      set(
+        draftEntity,
+        path
+          .split('.')
+          .map(camelCase)
+          .join('.'),
+        { ...sideloadReference, ...sideloadedEntity }
+      );
     });
   });
 };
@@ -87,7 +94,7 @@ export const selectMergedEntitiesFactory = () =>
         return entity;
       }
 
-      const entitiesForQuery = data || ids.map((id) => entities[domain][id]);
+      const entitiesForQuery = data || ids!.map((id) => entities[domain][id]);
 
       if (include) {
         const entityPaths = include.split(',');
@@ -100,7 +107,7 @@ export const selectMergedEntitiesFactory = () =>
       }
 
       return entitiesForQuery;
-    },
+    }
   );
 
 export const selectMergedEntitiesWithUpdateQueriesFactory = () =>
@@ -123,5 +130,5 @@ export const selectMergedEntitiesWithUpdateQueriesFactory = () =>
 
         return nextUpdateQuery({ previousData: updatedData, data: nextQueryResult });
       }, initialData);
-    },
+    }
   );

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   selectEntities,
   selectDomainFromQuery,
@@ -162,7 +163,7 @@ describe('Entities selectors', () => {
         selectEntitiesByDomainAndIds(state, 'projects', [
           '5e22ba6c-c3e6-4503-8cf7-1ac82629f65c',
           '840958a7-b448-45be-9400-c90da58073ee',
-        ]),
+        ])
       ).toEqual([
         {
           id: '5e22ba6c-c3e6-4503-8cf7-1ac82629f65c',

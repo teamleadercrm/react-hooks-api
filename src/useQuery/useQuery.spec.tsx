@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { Provider as ReactReduxProvider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -408,7 +409,7 @@ describe('useQuery', () => {
         resolve({
           data: [],
         });
-      }),
+      })
     );
 
     const { result, waitForNextUpdate } = renderHook(() => useQuery(QUERY, {}, { ignoreCache: true }), {

@@ -17,13 +17,13 @@ const shallowOnArray = (previous: any, next: any) => {
 };
 
 export const memoizeWithResultArrayEntryShallowCheck = (func: (...args: any[]) => any) => {
-  let lastArgs = null;
-  let lastResult = null;
-  return (...args) => {
+  let lastArgs: any[] | null = null;
+  let lastResult: any | null = null;
+  return (...args: any[]) => {
     if (
       lastArgs !== null &&
       lastArgs.length === args.length &&
-      args.every((value, index) => shallow(value, lastArgs[index]))
+      args.every((value, index) => shallow(value, lastArgs![index]))
     ) {
       return lastResult;
     }

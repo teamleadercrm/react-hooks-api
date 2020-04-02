@@ -24,7 +24,7 @@ const entities = produce((draft: Draft<State>, action: EntitiesAction) => {
             ...action.payload.entities[nextEntityId],
           },
         }),
-        draft[action.payload.type] || {},
+        draft[action.payload.type] || {}
       );
       return;
   }

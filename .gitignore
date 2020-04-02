@@ -1,5 +1,4 @@
+*.log
 .DS_Store
 node_modules
-
-lib
-.rpt2_cache
+dist

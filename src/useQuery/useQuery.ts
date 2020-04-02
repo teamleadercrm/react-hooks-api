@@ -1,4 +1,4 @@
-import { useEffect, useContext, useCallback, useMemo, useState } from 'react';
+import { useEffect, useContext, useCallback, useMemo } from 'react';
 
 import generateQueryCacheKey from '../utils/generateQueryCacheKey';
 
@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from '../store/CustomReduxContext';
 import Context from '../Context';
 import { selectEntitiesFromQueryFactory } from '../store/entities/selectors';
 import { selectLoadingFromQueryFactory, selectMetaFromQueryFactory } from '../store/queries/selectors';
+import { State } from 'store/reducer';
 
 type CalculatedQuery = {
   domain: string;
@@ -48,7 +49,7 @@ const defaultConfig = {
 const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   query,
   variables,
-  { ignoreCache = defaultConfig.ignoreCache, fetchAll = defaultConfig.fetchAll } = defaultConfig,
+  { ignoreCache = defaultConfig.ignoreCache, fetchAll = defaultConfig.fetchAll }: Options = defaultConfig
 ) => {
   const key = useMemo(() => generateQueryCacheKey(query(variables)), [variables]);
 
@@ -58,9 +59,9 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   const selectMeta = useMemo(selectMetaFromQueryFactory, []);
   const dispatch = useDispatch();
 
-  const loading = useSelector(state => selectLoading(state, key));
-  const data = useSelector(state => selectData(state, key));
-  const meta = useSelector(state => selectMeta(state, key));
+  const loading = useSelector((state: State) => selectLoading(state, key));
+  const data = useSelector((state) => selectData(state, key));
+  const meta = useSelector((state: State) => selectMeta(state, key));
 
   // Effect only runs when the result query (with variables) has changed
   useEffect(() => {
@@ -82,7 +83,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
       }
       dispatch(queryRequest({ key: generateQueryCacheKey(query(newVariables)), APIContext: API }));
     },
-    [key, ignoreCache, data],
+    [key, ignoreCache, data]
   );
 
   /*

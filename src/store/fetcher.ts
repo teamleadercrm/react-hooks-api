@@ -11,7 +11,7 @@ import { Response } from '../typings/API';
 /**
  * @TODO strongly type the Action
  */
-const fetcher = ({ dispatch }) => next => ({ type, payload }: { type: string, payload: any }) => {
+const fetcher = ({ dispatch }) => (next) => ({ type, payload }: { type: string; payload: any }) => {
   switch (type) {
     case getType(queryActions.queryRequest): {
       const key = payload.key;
@@ -23,8 +23,8 @@ const fetcher = ({ dispatch }) => next => ({ type, payload }: { type: string, pa
       payload.APIContext[domain][action](options)
         .then((response: Response) => {
           if (!isEntityAction) {
-            Object.keys(response.included || {}).forEach(entityType => {
-              const normalizedEntities = normalize(response.included[entityType]);
+            Object.keys(response.included || {}).forEach((entityType) => {
+              const normalizedEntities = normalize(response.included![entityType]);
               const domainFromType = TYPE_DOMAIN_MAPPING[entityType];
               dispatch(entitiesActions.saveNormalizedEntities({ type: domainFromType, entities: normalizedEntities }));
             });
@@ -34,7 +34,7 @@ const fetcher = ({ dispatch }) => next => ({ type, payload }: { type: string, pa
                 key,
                 data: response.data,
                 meta: response.meta,
-              }),
+              })
             );
 
             return;
@@ -43,8 +43,8 @@ const fetcher = ({ dispatch }) => next => ({ type, payload }: { type: string, pa
           const mainEntities = normalize(response.data);
           dispatch(entitiesActions.saveNormalizedEntities({ type: domain, entities: mainEntities }));
 
-          Object.keys(response.included || {}).forEach(entityType => {
-            const normalizedEntities = normalize(response.included[entityType]);
+          Object.keys(response.included || {}).forEach((entityType) => {
+            const normalizedEntities = normalize(response.included![entityType]);
             const domainFromType = TYPE_DOMAIN_MAPPING[entityType];
             dispatch(entitiesActions.saveNormalizedEntities({ type: domainFromType, entities: normalizedEntities }));
           });
@@ -52,18 +52,18 @@ const fetcher = ({ dispatch }) => next => ({ type, payload }: { type: string, pa
           dispatch(
             queryActions.querySuccess({
               key,
-              ids: Array.isArray(response.data) ? response.data.map(entity => entity.id) : response.data.id,
+              ids: Array.isArray(response.data) ? response.data.map((entity) => entity.id) : response.data.id,
               meta: response.meta,
-            }),
+            })
           );
         })
-        .catch(error => {
+        .catch((error) => {
           dispatch(queryActions.queryFailure({ key, error }));
         });
     }
   }
 
-  return next({ type, payload })
-}
+  return next({ type, payload });
+};
 
 export default fetcher;

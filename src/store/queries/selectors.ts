@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect'
+import { createSelector } from 'reselect';
 import { State } from '../reducer';
 import decodeQueryCacheKey from '../../utils/decodeQueryCacheKey';
 
@@ -14,29 +14,25 @@ export const selectIdsFromQuery = createSelector(selectQueryByKey, (query) => qu
 
 export const selectDomainNameFromQuery = createSelector(
   (_, key) => key,
-  (key) => decodeQueryCacheKey(key).domain,
+  (key) => decodeQueryCacheKey(key).domain
 );
 
 export const selectDataFromQuery = createSelector(selectQueryByKey, (query) => query && query.data);
 
 // Factories
 
-export const selectLoadingFromQueryFactory = () => createSelector(
-  selectQueryByKey,
-  (query) => query ? query.loading : true
-);
+export const selectLoadingFromQueryFactory = () =>
+  createSelector(selectQueryByKey, (query) => (query ? query.loading : true));
 
-export const selectMetaFromQueryFactory = () => createSelector(
-  selectQueryByKey,
-  (query) => query && query.meta
-);
+export const selectMetaFromQueryFactory = () => createSelector(selectQueryByKey, (query) => query && query.meta);
 
-export const selectLoadingFromQueryWithUpdateQueriesFactory = () => createSelector(
-  (state: State) => state,
-  (_, key) => key,
-  (_, __, updateQueryKeys) => updateQueryKeys,
-  (state, key: string, updateQueryKeys: string[]) => {
-    const selectLoadingFromQuery = selectLoadingFromQueryFactory();
-    return [key, ...updateQueryKeys].some(nextKey => selectLoadingFromQuery(state, nextKey));
-  }
-)
+export const selectLoadingFromQueryWithUpdateQueriesFactory = () =>
+  createSelector(
+    (state: State) => state,
+    (_, key) => key,
+    (_, __, updateQueryKeys) => updateQueryKeys,
+    (state, key: string, updateQueryKeys: string[]) => {
+      const selectLoadingFromQuery = selectLoadingFromQueryFactory();
+      return [key, ...updateQueryKeys].some((nextKey) => selectLoadingFromQuery(state, nextKey));
+    }
+  );

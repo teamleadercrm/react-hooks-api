@@ -18,7 +18,7 @@ export const selectEntities = (state: State) => state.entities;
 export const selectDomainFromQuery = createSelector(
   selectDomainNameFromQuery,
   selectEntities,
-  (domainName, entities) => entities[domainName],
+  (domainName, entities) => entities[domainName]
 );
 
 // Factories
@@ -42,7 +42,7 @@ export const selectEntitiesFromQueryFactory = () =>
       }
 
       return domain[ids];
-    },
+    }
   );
 
 export const selectEntityByDomainAndIdFactory = () =>
@@ -50,7 +50,7 @@ export const selectEntityByDomainAndIdFactory = () =>
     (_, domain) => domain,
     (_, __, id) => id,
     selectEntities,
-    (domain, id, entities) => entities[domain]?.[id],
+    (domain, id, entities) => entities[domain]?.[id]
   );
 
 export const selectEntitiesByDomainAndIdsFactory = () =>
@@ -58,5 +58,5 @@ export const selectEntitiesByDomainAndIdsFactory = () =>
     (_, domain) => domain,
     (_, __, ids) => ids,
     selectEntities,
-    (domain, ids, entities) => ids.map((id) => entities[domain]?.[id]),
+    (domain, ids, entities) => ids.map((id) => entities[domain]?.[id])
   );
