@@ -24,7 +24,7 @@ const fetcher = ({ dispatch }) => next => ({ type, payload }: { type: string, pa
         .then((response: Response) => {
           if (!isEntityAction) {
             Object.keys(response.included || {}).forEach(entityType => {
-              const normalizedEntities = normalize(response.included[entityType]);
+              const normalizedEntities = normalize(response.included![entityType]);
               const domainFromType = TYPE_DOMAIN_MAPPING[entityType];
               dispatch(entitiesActions.saveNormalizedEntities({ type: domainFromType, entities: normalizedEntities }));
             });
@@ -44,7 +44,7 @@ const fetcher = ({ dispatch }) => next => ({ type, payload }: { type: string, pa
           dispatch(entitiesActions.saveNormalizedEntities({ type: domain, entities: mainEntities }));
 
           Object.keys(response.included || {}).forEach(entityType => {
-            const normalizedEntities = normalize(response.included[entityType]);
+            const normalizedEntities = normalize(response.included![entityType]);
             const domainFromType = TYPE_DOMAIN_MAPPING[entityType];
             dispatch(entitiesActions.saveNormalizedEntities({ type: domainFromType, entities: normalizedEntities }));
           });
