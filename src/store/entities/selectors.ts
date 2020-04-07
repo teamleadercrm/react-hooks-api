@@ -2,6 +2,7 @@ import { createSelector, createSelectorCreator } from 'reselect';
 import { State } from '../reducer';
 import { selectIdsFromQuery, selectDomainNameFromQuery, selectDataFromQuery } from '../queries/selectors';
 import { memoizeWithResultArrayEntryShallowCheck } from './memoizeWithResultArrayEntryShallowCheck';
+import { NormalizedEntities } from './entities';
 
 /**
  * Creates a selector with array memoization support
@@ -21,6 +22,26 @@ export const selectDomainFromQuery = createSelector(
   (domainName, entities) => entities[domainName]
 );
 
+const mapQueryDataToEntity = (query: { data: any; ids: string[] | string } | null, domain: NormalizedEntities) => {
+  if (!query) {
+    return null;
+  }
+
+  if (query.data) {
+    return query.data;
+  }
+
+  if (!query.ids) {
+    return null;
+  }
+
+  if (Array.isArray(query.ids)) {
+    return query.ids.map((id) => domain[id]);
+  }
+
+  return domain[query.ids];
+};
+
 // Factories
 
 export const selectEntitiesFromQueryFactory = () =>
@@ -28,21 +49,7 @@ export const selectEntitiesFromQueryFactory = () =>
     selectDataFromQuery,
     selectIdsFromQuery,
     selectDomainFromQuery,
-    (queryData, ids, domain) => {
-      if (queryData) {
-        return queryData;
-      }
-
-      if (!ids) {
-        return null;
-      }
-
-      if (Array.isArray(ids)) {
-        return ids.map((id) => domain[id]);
-      }
-
-      return domain[ids];
-    }
+    (queryData, ids, domain) => mapQueryDataToEntity({ data: queryData, ids }, domain)
   );
 
 export const selectEntityByDomainAndIdFactory = () =>
