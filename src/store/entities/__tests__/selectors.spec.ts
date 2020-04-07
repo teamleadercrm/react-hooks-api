@@ -5,6 +5,7 @@ import {
   selectEntitiesFromQueryFactory,
   selectEntityByDomainAndIdFactory,
   selectEntitiesByDomainAndIdsFactory,
+  selectEntitiesFromQueryWithUpdateQueriesFactory,
 } from '../selectors';
 import generateQueryCacheKey from '../../../utils/generateQueryCacheKey';
 
@@ -172,6 +173,64 @@ describe('Entities selectors', () => {
         {
           id: '840958a7-b448-45be-9400-c90da58073ee',
           name: 'a project',
+        },
+      ]);
+    });
+  });
+
+  describe('selectEntitiesFromQueryWithUpdateQueriesFactory', () => {
+    const selectEntitiesFromQueryWithUpdateQueries = selectEntitiesFromQueryWithUpdateQueriesFactory();
+
+    it('selects the combined data based with updateQueries', () => {
+      const generateProjectDomainKey = (name) => generateQueryCacheKey({ domain: 'projects', options: name });
+      const mainKey = generateProjectDomainKey('mainKey');
+      const secondKey = generateProjectDomainKey('secondKey');
+      const updateQueries = {
+        [secondKey]: ({ previousData, data }: { previousData: any; data: any }) => [...previousData, ...data],
+      };
+      const state = {
+        queries: {
+          [mainKey]: {
+            loading: false,
+            ids: ['3e85d310-4ac5-444d-8465-de39767af6c7', '816105f4-37a8-4ff5-819b-d9597df18128'],
+          },
+          [secondKey]: {
+            loading: false,
+            ids: ['fb86bb39-96da-45d8-a394-fafc27fc2869', 'cf06becb-2988-4168-abc9-5c8faa542e69'],
+          },
+        },
+        entities: {
+          projects: {
+            '3e85d310-4ac5-444d-8465-de39767af6c7': {
+              id: '3e85d310-4ac5-444d-8465-de39767af6c7',
+            },
+            '816105f4-37a8-4ff5-819b-d9597df18128': {
+              id: '816105f4-37a8-4ff5-819b-d9597df18128',
+            },
+            'fb86bb39-96da-45d8-a394-fafc27fc2869': {
+              id: 'fb86bb39-96da-45d8-a394-fafc27fc2869',
+            },
+            'cf06becb-2988-4168-abc9-5c8faa542e69': {
+              id: 'cf06becb-2988-4168-abc9-5c8faa542e69',
+            },
+          },
+        },
+      };
+
+      const data = selectEntitiesFromQueryWithUpdateQueries(state, mainKey, updateQueries);
+
+      expect(data).toEqual([
+        {
+          id: '3e85d310-4ac5-444d-8465-de39767af6c7',
+        },
+        {
+          id: '816105f4-37a8-4ff5-819b-d9597df18128',
+        },
+        {
+          id: 'fb86bb39-96da-45d8-a394-fafc27fc2869',
+        },
+        {
+          id: 'cf06becb-2988-4168-abc9-5c8faa542e69',
         },
       ]);
     });

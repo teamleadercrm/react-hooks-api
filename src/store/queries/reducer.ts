@@ -4,15 +4,15 @@ import produce, { Draft } from 'immer';
 
 import * as actions from './actions';
 
-export type State = DeepReadonly<{
-  [key: string]: {
-    loading: boolean;
-    error?: Error;
-    ids?: string | string[];
-    data?: any;
-    meta?: any;
-  };
-}>;
+export type Query = {
+  loading: boolean;
+  error?: Error;
+  ids?: string | string[];
+  data?: any;
+  meta?: any;
+};
+
+export type State = DeepReadonly<Record<string, Query>>;
 
 export type QueryAction = ActionType<typeof actions>;
 

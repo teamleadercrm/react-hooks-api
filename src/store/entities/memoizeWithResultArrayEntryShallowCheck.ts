@@ -3,7 +3,7 @@ const shallow = (previous: any, next: any) => {
 };
 
 const shallowOnArray = (previous: any, next: any) => {
-  if (Array.isArray(previous) && Array.isArray(next)) {
+  if (Array.isArray(previous) && Array.isArray(next) && previous.length === next.length) {
     return previous.every((item, index) => shallow(item, next[index]));
   }
 

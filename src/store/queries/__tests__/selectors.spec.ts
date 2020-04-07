@@ -2,10 +2,12 @@ import {
   selectQueries,
   selectLoadingFromQueryFactory,
   selectMetaFromQueryFactory,
+  selectQueriesByKeys,
   selectQueryByKey,
-  selectLoadingFromQueryWithUpdateQueriesFactory,
   selectIdsFromQuery,
   selectDomainNameFromQuery,
+  selectLoadingFromQueriesFactory,
+  selectFollowUpQueries,
 } from '../selectors';
 import generateQueryCacheKey from '../../../utils/generateQueryCacheKey';
 
@@ -73,14 +75,6 @@ describe('queries selectors', () => {
     expect(meta).toEqual({ matches: 2 });
   });
 
-  it('selects the combined loading state of multiple queries', () => {
-    const selectLoadingFromQueryWithUpdateQueries = selectLoadingFromQueryWithUpdateQueriesFactory();
-
-    const loading = selectLoadingFromQueryWithUpdateQueries(INITIAL_STATE, 'uniqueKey', ['uniqueKey2']);
-
-    expect(loading).toBeTruthy();
-  });
-
   it('selects the ids from a query', () => {
     INITIAL_STATE.queries = {
       uniqueKey3: {
@@ -100,5 +94,68 @@ describe('queries selectors', () => {
 
     const domain = selectDomainNameFromQuery(INITIAL_STATE, key);
     expect(domain).toEqual('projects');
+  });
+
+  describe('selectQueriesByKeys', () => {
+    it('selects all queries using passed keys', () => {
+      const keys = ['key1', 'key2'];
+      INITIAL_STATE.queries = {
+        [keys[0]]: {
+          id: 'key1',
+        },
+        [keys[1]]: {
+          id: 'key2',
+        },
+      };
+
+      expect(selectQueriesByKeys(INITIAL_STATE, keys)).toEqual([{ id: 'key1' }, { id: 'key2' }]);
+    });
+  });
+
+  describe('selectLoadingFromQueriesFactory', () => {
+    const selectLoadingFromQueries = selectLoadingFromQueriesFactory();
+    it('selects the combined loading state of multiple queries', () => {
+      const keys = ['key1', 'key2'];
+      INITIAL_STATE.queries = {
+        [keys[0]]: {
+          loading: false,
+        },
+        [keys[1]]: {
+          loading: true,
+        },
+      };
+      const loading = selectLoadingFromQueries(INITIAL_STATE, keys);
+
+      expect(loading).toBeTruthy();
+    });
+  });
+
+  describe('selectFollowUpQueries', () => {
+    it('selects and builds a collection of follow up queries', () => {
+      const combine = ({ previousData, data }: { previousData: any; data: any }) => [...previousData, data];
+      const updateQueries = {
+        key1: combine,
+        key2: combine,
+      };
+      INITIAL_STATE.queries = {
+        key1: {
+          loading: false,
+          ids: ['id1', 'id2'],
+        },
+        key2: {
+          loading: true,
+        },
+      };
+
+      const followUpQueries = selectFollowUpQueries(INITIAL_STATE, null, updateQueries);
+      expect(followUpQueries).toEqual([
+        {
+          loading: false,
+          ids: ['id1', 'id2'],
+          updateQuery: combine,
+        },
+        { loading: true, updateQuery: combine },
+      ]);
+    });
   });
 });

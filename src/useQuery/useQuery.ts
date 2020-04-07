@@ -1,12 +1,19 @@
-import { useEffect, useContext, useCallback, useMemo } from 'react';
+import { useEffect, useContext, useCallback, useMemo, useState } from 'react';
 
 import generateQueryCacheKey from '../utils/generateQueryCacheKey';
 
 import { queryRequest } from '../store/queries/actions';
 import { useSelector, useDispatch } from '../store/CustomReduxContext';
 import Context from '../Context';
-import { selectEntitiesFromQueryFactory } from '../store/entities/selectors';
-import { selectLoadingFromQueryFactory, selectMetaFromQueryFactory } from '../store/queries/selectors';
+import {
+  selectEntitiesFromQueryWithUpdateQueriesFactory,
+  selectEntitiesFromQueryFactory,
+} from '../store/entities/selectors';
+import {
+  selectLoadingFromQueryFactory,
+  selectMetaFromQueryFactory,
+  selectLoadingFromQueriesFactory,
+} from '../store/queries/selectors';
 import { State } from 'store/reducer';
 
 type CalculatedQuery = {
@@ -41,6 +48,8 @@ const registerQuery = (query: { fetch: () => void } | undefined, fetch: () => vo
   };
 };
 
+export type UpdateQueries = Record<string, (data: { previousData: any; data: any }) => any>;
+
 const defaultConfig = {
   ignoreCache: false,
   fetchAll: false,
@@ -52,15 +61,24 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   { ignoreCache = defaultConfig.ignoreCache, fetchAll = defaultConfig.fetchAll }: Options = defaultConfig
 ) => {
   const key = useMemo(() => generateQueryCacheKey(query(variables)), [variables]);
+  const [updateQueries, setUpdateQueries] = useState<UpdateQueries>({});
+  const hasUpdateQueries = Object.keys(updateQueries).length !== 0;
 
   const API = useContext(Context);
   const selectLoading = useMemo(selectLoadingFromQueryFactory, []);
+  const selectLoadingFromQueries = useMemo(selectLoadingFromQueriesFactory, []);
   const selectData = useMemo(selectEntitiesFromQueryFactory, []);
+  const selectDataWithUpdateQueries = useMemo(selectEntitiesFromQueryWithUpdateQueriesFactory, []);
   const selectMeta = useMemo(selectMetaFromQueryFactory, []);
   const dispatch = useDispatch();
 
-  const loading = useSelector((state: State) => selectLoading(state, key));
-  const data = useSelector((state) => selectData(state, key));
+  const loading = useSelector((state: State) =>
+    hasUpdateQueries ? selectLoadingFromQueries(state, [key, ...Object.keys(updateQueries)]) : selectLoading(state, key)
+  );
+  const data = useSelector((state) =>
+    hasUpdateQueries ? selectDataWithUpdateQueries(state, key, updateQueries) : selectData(state, key)
+  );
+
   const meta = useSelector((state: State) => selectMeta(state, key));
 
   // Effect only runs when the result query (with variables) has changed
@@ -75,13 +93,11 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   // Function supplied to do a refetch with new variables
   // Takes an updateQuery variable that allows you to specify how
   // The data should be merged
-  // @TODO refactor this so it works with our new redux flow
   const fetchMore = useCallback(
     ({ variables: newVariables, updateQuery }) => {
-      if (!ignoreCache && data) {
-        return;
-      }
-      dispatch(queryRequest({ key: generateQueryCacheKey(query(newVariables)), APIContext: API }));
+      const fetchMoreKey = generateQueryCacheKey(query(newVariables));
+      setUpdateQueries({ ...updateQueries, [fetchMoreKey]: updateQuery });
+      dispatch(queryRequest({ key: fetchMoreKey, APIContext: API }));
     },
     [key, ignoreCache, data]
   );
