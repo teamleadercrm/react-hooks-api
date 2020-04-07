@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import { State } from '../reducer';
 import decodeQueryCacheKey from '../../utils/decodeQueryCacheKey';
+import { UpdateQueries } from '../../useQuery/useQuery';
 
 export const selectQueries = (state: State) => state.queries;
 
@@ -24,6 +25,16 @@ export const selectDomainNameFromQuery = createSelector(
 );
 
 export const selectDataFromQuery = createSelector(selectQueryByKey, (query) => query && query.data);
+
+export const selectFollowUpQueries = createSelector(
+  (_: any, __: any, updateQueries: UpdateQueries) => updateQueries,
+  selectQueries,
+  (updateQueries, queries) => {
+    return Object.keys(updateQueries).map((key) => {
+      return { ...queries[key], updateQuery: updateQueries[key] };
+    });
+  }
+);
 
 // Factories
 
