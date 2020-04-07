@@ -10,6 +10,12 @@ export const selectQueryByKey = createSelector(
   (queries, key) => queries[key]
 );
 
+export const selectQueriesByKeys = createSelector(
+  selectQueries,
+  (_, keys) => keys,
+  (queries, keys) => keys.map((key) => queries[key])
+);
+
 export const selectIdsFromQuery = createSelector(selectQueryByKey, (query) => query && query.ids);
 
 export const selectDomainNameFromQuery = createSelector(
@@ -26,13 +32,5 @@ export const selectLoadingFromQueryFactory = () =>
 
 export const selectMetaFromQueryFactory = () => createSelector(selectQueryByKey, (query) => query && query.meta);
 
-export const selectLoadingFromQueryWithUpdateQueriesFactory = () =>
-  createSelector(
-    (state: State) => state,
-    (_, key) => key,
-    (_, __, updateQueryKeys) => updateQueryKeys,
-    (state, key: string, updateQueryKeys: string[]) => {
-      const selectLoadingFromQuery = selectLoadingFromQueryFactory();
-      return [key, ...updateQueryKeys].some((nextKey) => selectLoadingFromQuery(state, nextKey));
-    }
-  );
+export const selectLoadingFromQueriesFactory = () =>
+  createSelector(selectQueriesByKeys, (queries) => queries.some((query) => query && query.loading));
