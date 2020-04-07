@@ -8,6 +8,7 @@ import {
   selectDomainNameFromQuery,
   selectLoadingFromQueriesFactory,
   selectFollowUpQueries,
+  selectErrorFromQueryFactory,
 } from '../selectors';
 import generateQueryCacheKey from '../../../utils/generateQueryCacheKey';
 
@@ -94,6 +95,20 @@ describe('queries selectors', () => {
 
     const domain = selectDomainNameFromQuery(INITIAL_STATE, key);
     expect(domain).toEqual('projects');
+  });
+
+  describe('selectErrorFromQueryFactory', () => {
+    const selectErrorFromQuery = selectErrorFromQueryFactory();
+
+    it('selects the error object saved on a query', () => {
+      INITIAL_STATE.queries = {
+        key1: {
+          error: 'An error',
+        },
+      };
+
+      expect(selectErrorFromQuery(INITIAL_STATE, 'key1')).toEqual('An error');
+    });
   });
 
   describe('selectQueriesByKeys', () => {
