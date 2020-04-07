@@ -5,8 +5,11 @@ import generateQueryCacheKey from '../utils/generateQueryCacheKey';
 import { queryRequest } from '../store/queries/actions';
 import { useSelector, useDispatch } from '../store/CustomReduxContext';
 import Context from '../Context';
-import { selectEntitiesFromQueryFactory } from '../store/entities/selectors';
-import { selectLoadingFromQueryFactory, selectMetaFromQueryFactory } from '../store/queries/selectors';
+import {
+  selectLoadingFromQueryFactory,
+  selectMetaFromQueryFactory,
+  selectLoadingFromQueriesFactory,
+} from '../store/queries/selectors';
 import { State } from 'store/reducer';
 
 type CalculatedQuery = {
@@ -55,15 +58,18 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
 ) => {
   const key = useMemo(() => generateQueryCacheKey(query(variables)), [variables]);
   const [updateQueries, setUpdateQueries] = useState<UpdateQueries>({});
+  const hasUpdateQueries = Object.keys(updateQueries).length !== 0;
 
   const API = useContext(Context);
   const selectLoading = useMemo(selectLoadingFromQueryFactory, []);
+  const selectLoadingFromQueries = useMemo(selectLoadingFromQueriesFactory, []);
   const selectData = useMemo(selectEntitiesFromQueryFactory, []);
   const selectMeta = useMemo(selectMetaFromQueryFactory, []);
   const dispatch = useDispatch();
 
-  const loading = useSelector((state: State) => selectLoading(state, key));
-  const data = useSelector((state) => selectData(state, key));
+  const loading = useSelector((state: State) =>
+    hasUpdateQueries ? selectLoadingFromQueries(state, [key, ...Object.keys(updateQueries)]) : selectLoading(state, key)
+  );
   const meta = useSelector((state: State) => selectMeta(state, key));
 
   // Effect only runs when the result query (with variables) has changed
