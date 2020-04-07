@@ -41,7 +41,12 @@ export const selectFollowUpQueries = createSelector(
 export const selectLoadingFromQueryFactory = () =>
   createSelector(selectQueryByKey, (query) => (query ? query.loading : true));
 
+export const selectErrorFromQueryFactory = () => createSelector(selectQueryByKey, (query) => query && query.error);
+
 export const selectMetaFromQueryFactory = () => createSelector(selectQueryByKey, (query) => query && query.meta);
 
 export const selectLoadingFromQueriesFactory = () =>
   createSelector(selectQueriesByKeys, (queries) => queries.some((query) => query && query.loading));
+
+export const selectErrorFromQueriesFactory = () =>
+  createSelector(selectQueriesByKeys, (queries) => queries.map((query) => query && query.error).filter(Boolean));

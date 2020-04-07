@@ -13,6 +13,8 @@ import {
   selectLoadingFromQueryFactory,
   selectMetaFromQueryFactory,
   selectLoadingFromQueriesFactory,
+  selectErrorFromQueryFactory,
+  selectErrorFromQueriesFactory,
 } from '../store/queries/selectors';
 import { State } from 'store/reducer';
 
@@ -66,6 +68,8 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   const API = useContext(Context);
   const selectLoading = useMemo(selectLoadingFromQueryFactory, []);
   const selectLoadingFromQueries = useMemo(selectLoadingFromQueriesFactory, []);
+  const selectErrorFromQuery = useMemo(selectErrorFromQueryFactory, []);
+  const selectErrorFromQueries = useMemo(selectErrorFromQueriesFactory, []);
   const selectData = useMemo(selectEntitiesFromQueryFactory, []);
   const selectDataWithUpdateQueries = useMemo(selectEntitiesFromQueryWithUpdateQueriesFactory, []);
   const selectMeta = useMemo(selectMetaFromQueryFactory, []);
@@ -73,6 +77,11 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
 
   const loading = useSelector((state: State) =>
     hasUpdateQueries ? selectLoadingFromQueries(state, [key, ...Object.keys(updateQueries)]) : selectLoading(state, key)
+  );
+  const error = useSelector((state: State) =>
+    hasUpdateQueries
+      ? selectErrorFromQueries(state, [key, ...Object.keys(updateQueries)])
+      : selectErrorFromQuery(state, key)
   );
   const data = useSelector((state) =>
     hasUpdateQueries ? selectDataWithUpdateQueries(state, key, updateQueries) : selectData(state, key)
@@ -110,7 +119,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
     queries[key] = registerQuery(queries[key], () => fetchMore({ variables }));
   }, [key]);
 
-  return { loading, data, meta, fetchMore };
+  return { loading, error, data, meta, fetchMore };
 };
 
 export default useQuery;
