@@ -7,6 +7,7 @@ import {
   selectIdsFromQuery,
   selectDomainNameFromQuery,
   selectLoadingFromQueriesFactory,
+  selectFollowUpQueries,
 } from '../selectors';
 import generateQueryCacheKey from '../../../utils/generateQueryCacheKey';
 
@@ -126,6 +127,35 @@ describe('queries selectors', () => {
       const loading = selectLoadingFromQueries(INITIAL_STATE, keys);
 
       expect(loading).toBeTruthy();
+    });
+  });
+
+  describe('selectFollowUpQueries', () => {
+    it('selects and builds a collection of follow up queries', () => {
+      const combine = ({ previousData, data }: { previousData: any; data: any }) => [...previousData, data];
+      const updateQueries = {
+        key1: combine,
+        key2: combine,
+      };
+      INITIAL_STATE.queries = {
+        key1: {
+          loading: false,
+          ids: ['id1', 'id2'],
+        },
+        key2: {
+          loading: true,
+        },
+      };
+
+      const followUpQueries = selectFollowUpQueries(INITIAL_STATE, null, updateQueries);
+      expect(followUpQueries).toEqual([
+        {
+          loading: false,
+          ids: ['id1', 'id2'],
+          updateQuery: combine,
+        },
+        { loading: true, updateQuery: combine },
+      ]);
     });
   });
 });
