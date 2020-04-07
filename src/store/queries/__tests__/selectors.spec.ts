@@ -9,6 +9,7 @@ import {
   selectLoadingFromQueriesFactory,
   selectFollowUpQueries,
   selectErrorFromQueryFactory,
+  selectErrorFromQueriesFactory,
 } from '../selectors';
 import generateQueryCacheKey from '../../../utils/generateQueryCacheKey';
 
@@ -108,6 +109,21 @@ describe('queries selectors', () => {
       };
 
       expect(selectErrorFromQuery(INITIAL_STATE, 'key1')).toEqual('An error');
+    });
+  });
+
+  describe('selectErrorFromQueriesFactory', () => {
+    const selectErrorFromQueries = selectErrorFromQueriesFactory();
+
+    it('returns an array of all errors', () => {
+      INITIAL_STATE.queries = {
+        key1: {},
+        key2: {
+          error: 'Another error',
+        },
+      };
+
+      expect(selectErrorFromQueries(INITIAL_STATE, ['key1', 'key2'])).toEqual(['Another error']);
     });
   });
 
