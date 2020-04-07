@@ -1,4 +1,4 @@
-import { useEffect, useContext, useCallback, useMemo } from 'react';
+import { useEffect, useContext, useCallback, useMemo, useState } from 'react';
 
 import generateQueryCacheKey from '../utils/generateQueryCacheKey';
 
@@ -41,6 +41,8 @@ const registerQuery = (query: { fetch: () => void } | undefined, fetch: () => vo
   };
 };
 
+type UpdateQueries = Record<string, (data: { previousData: any; data: any }) => any>;
+
 const defaultConfig = {
   ignoreCache: false,
   fetchAll: false,
@@ -52,6 +54,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   { ignoreCache = defaultConfig.ignoreCache, fetchAll = defaultConfig.fetchAll }: Options = defaultConfig
 ) => {
   const key = useMemo(() => generateQueryCacheKey(query(variables)), [variables]);
+  const [updateQueries, setUpdateQueries] = useState<UpdateQueries>({});
 
   const API = useContext(Context);
   const selectLoading = useMemo(selectLoadingFromQueryFactory, []);
@@ -78,7 +81,9 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   // @TODO refactor this so it works with our new redux flow
   const fetchMore = useCallback(
     ({ variables: newVariables, updateQuery }) => {
-      dispatch(queryRequest({ key: generateQueryCacheKey(query(newVariables)), APIContext: API }));
+      const fetchMoreKey = generateQueryCacheKey(query(newVariables));
+      setUpdateQueries({ ...updateQueries, [fetchMoreKey]: updateQuery });
+      dispatch(queryRequest({ key: fetchMoreKey, APIContext: API }));
     },
     [key, ignoreCache, data]
   );
