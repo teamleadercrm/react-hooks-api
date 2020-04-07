@@ -47,3 +47,6 @@ export const selectMetaFromQueryFactory = () => createSelector(selectQueryByKey,
 
 export const selectLoadingFromQueriesFactory = () =>
   createSelector(selectQueriesByKeys, (queries) => queries.some((query) => query && query.loading));
+
+export const selectErrorFromQueriesFactory = () =>
+  createSelector(selectQueriesByKeys, (queries) => queries.map((query) => query && query.error).filter(Boolean));
