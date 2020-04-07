@@ -93,7 +93,6 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   // Function supplied to do a refetch with new variables
   // Takes an updateQuery variable that allows you to specify how
   // The data should be merged
-  // @TODO refactor this so it works with our new redux flow
   const fetchMore = useCallback(
     ({ variables: newVariables, updateQuery }) => {
       const fetchMoreKey = generateQueryCacheKey(query(newVariables));
