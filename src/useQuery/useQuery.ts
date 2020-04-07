@@ -6,6 +6,10 @@ import { queryRequest } from '../store/queries/actions';
 import { useSelector, useDispatch } from '../store/CustomReduxContext';
 import Context from '../Context';
 import {
+  selectEntitiesFromQueryWithUpdateQueriesFactory,
+  selectEntitiesFromQueryFactory,
+} from '../store/entities/selectors';
+import {
   selectLoadingFromQueryFactory,
   selectMetaFromQueryFactory,
   selectLoadingFromQueriesFactory,
@@ -44,7 +48,7 @@ const registerQuery = (query: { fetch: () => void } | undefined, fetch: () => vo
   };
 };
 
-type UpdateQueries = Record<string, (data: { previousData: any; data: any }) => any>;
+export type UpdateQueries = Record<string, (data: { previousData: any; data: any }) => any>;
 
 const defaultConfig = {
   ignoreCache: false,
@@ -64,12 +68,17 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   const selectLoading = useMemo(selectLoadingFromQueryFactory, []);
   const selectLoadingFromQueries = useMemo(selectLoadingFromQueriesFactory, []);
   const selectData = useMemo(selectEntitiesFromQueryFactory, []);
+  const selectDataWithUpdateQueries = useMemo(selectEntitiesFromQueryWithUpdateQueriesFactory, []);
   const selectMeta = useMemo(selectMetaFromQueryFactory, []);
   const dispatch = useDispatch();
 
   const loading = useSelector((state: State) =>
     hasUpdateQueries ? selectLoadingFromQueries(state, [key, ...Object.keys(updateQueries)]) : selectLoading(state, key)
   );
+  const data = useSelector((state) =>
+    hasUpdateQueries ? selectDataWithUpdateQueries(state, key, updateQueries) : selectData(state, key)
+  );
+
   const meta = useSelector((state: State) => selectMeta(state, key));
 
   // Effect only runs when the result query (with variables) has changed
