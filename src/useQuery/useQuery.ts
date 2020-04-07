@@ -52,13 +52,12 @@ export type UpdateQueries = Record<string, (data: { previousData: any; data: any
 
 const defaultConfig = {
   ignoreCache: false,
-  fetchAll: false,
 };
 
 const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   query,
   variables,
-  { ignoreCache = defaultConfig.ignoreCache, fetchAll = defaultConfig.fetchAll }: Options = defaultConfig
+  { ignoreCache = defaultConfig.ignoreCache }: Options = defaultConfig
 ) => {
   const key = useMemo(() => generateQueryCacheKey(query(variables)), [variables]);
   const [updateQueries, setUpdateQueries] = useState<UpdateQueries>({});

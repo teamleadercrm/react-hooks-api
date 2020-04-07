@@ -15,12 +15,12 @@ const fetcher = ({ dispatch }) => (next) => ({ type, payload }: { type: string; 
   switch (type) {
     case getType(queryActions.queryRequest): {
       const key = payload.key;
-      const { domain, action, options } = decodeQueryCacheKey(key);
+      const { domain, action, options, fetchAll } = decodeQueryCacheKey(key);
 
       const isEntityAction = action === 'info' || action === 'list';
 
       // @TODO this promise should be cancellable
-      payload.APIContext[domain][action](options)
+      payload.APIContext[domain][action](options, { fetchAll: Boolean(fetchAll) })
         .then((response: Response) => {
           if (!isEntityAction) {
             Object.keys(response.included || {}).forEach((entityType) => {
