@@ -108,7 +108,7 @@ describe('useQuery', () => {
     });
 
     expect(result.current.loading).toEqual(true);
-    expect(result.current.data).toBeNull();
+    expect(result.current.data).toBeUndefined();
     expect(result.current.error).toBeUndefined();
     expect(result.current.fetchMore).toBeInstanceOf(Function);
   });

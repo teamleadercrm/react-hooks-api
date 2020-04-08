@@ -6,6 +6,7 @@ import {
   selectEntityByDomainAndIdFactory,
   selectEntitiesByDomainAndIdsFactory,
   selectEntitiesFromQueryWithUpdateQueriesFactory,
+  mapQueryToData,
 } from '../selectors';
 import generateQueryCacheKey from '../../../utils/generateQueryCacheKey';
 
@@ -232,6 +233,45 @@ describe('Entities selectors', () => {
         {
           id: 'cf06becb-2988-4168-abc9-5c8faa542e69',
         },
+      ]);
+    });
+  });
+
+  describe('mapQueryToData', () => {
+    it('returns undefined when the query is undefined', () => {
+      const data = mapQueryToData(undefined, {});
+      expect(data).toBeUndefined();
+    });
+
+    it('returns the data from a query if there is any', () => {
+      const data = mapQueryToData({ data: 'test' }, {});
+      expect(data).toEqual('test');
+    });
+
+    it('returns undefined when there are no ids on the query yet', () => {
+      const data = mapQueryToData({ loading: true }, {});
+      expect(data).toBeUndefined();
+    });
+
+    it('returns single entities or arrays of entities when available', () => {
+      const singleEntity = mapQueryToData(
+        { ids: '803d0b7e-4ab0-496e-bec6-d7e1cf5c1ba1' },
+        { '803d0b7e-4ab0-496e-bec6-d7e1cf5c1ba1': { id: '803d0b7e-4ab0-496e-bec6-d7e1cf5c1ba1' } }
+      );
+
+      expect(singleEntity).toEqual({ id: '803d0b7e-4ab0-496e-bec6-d7e1cf5c1ba1' });
+
+      const entityCollection = mapQueryToData(
+        { ids: ['803d0b7e-4ab0-496e-bec6-d7e1cf5c1ba1', '324d6d7a-3793-497a-be10-dcac78ee2468'] },
+        {
+          '803d0b7e-4ab0-496e-bec6-d7e1cf5c1ba1': { id: '803d0b7e-4ab0-496e-bec6-d7e1cf5c1ba1' },
+          '324d6d7a-3793-497a-be10-dcac78ee2468': { id: '324d6d7a-3793-497a-be10-dcac78ee2468' },
+        }
+      );
+
+      expect(entityCollection).toEqual([
+        { id: '803d0b7e-4ab0-496e-bec6-d7e1cf5c1ba1' },
+        { id: '324d6d7a-3793-497a-be10-dcac78ee2468' },
       ]);
     });
   });
