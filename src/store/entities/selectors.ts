@@ -31,7 +31,7 @@ export const selectDomainFromQuery = createSelector(
 
 export const mapQueryToData = (query: Partial<Query> | undefined, domain: NormalizedEntities) => {
   if (!query) {
-    return null;
+    return;
   }
 
   if (query.data) {
@@ -39,7 +39,7 @@ export const mapQueryToData = (query: Partial<Query> | undefined, domain: Normal
   }
 
   if (!query.ids) {
-    return null;
+    return;
   }
 
   if (Array.isArray(query.ids)) {
