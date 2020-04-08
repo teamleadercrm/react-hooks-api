@@ -29,7 +29,7 @@ export const selectDomainFromQuery = createSelector(
   (domainName, entities) => entities[domainName]
 );
 
-const mapQueryDataToEntity = (query: Partial<Query> | null, domain: NormalizedEntities) => {
+export const mapQueryToData = (query: Partial<Query> | undefined, domain: NormalizedEntities) => {
   if (!query) {
     return null;
   }
@@ -56,7 +56,7 @@ export const selectEntitiesFromQueryFactory = () =>
     selectDataFromQuery,
     selectIdsFromQuery,
     selectDomainFromQuery,
-    (queryData, ids, domain) => mapQueryDataToEntity({ data: queryData, ids }, domain)
+    (queryData, ids, domain) => mapQueryToData({ data: queryData, ids }, domain)
   );
 
 export const selectEntityByDomainAndIdFactory = () =>
@@ -84,15 +84,15 @@ export const selectEntitiesFromQueryWithUpdateQueriesFactory = () =>
     selectQueryByKey,
     selectFollowUpQueries,
     selectDomainFromQuery,
-    (mainQuery: Query | null, followUpQueries: FollowUpQuery[], domain: NormalizedEntities) => {
-      let mainQueryData = mapQueryDataToEntity(mainQuery, domain);
+    (mainQuery: Query | undefined, followUpQueries: FollowUpQuery[], domain: NormalizedEntities) => {
+      let mainQueryData = mapQueryToData(mainQuery, domain);
 
       if (!mainQueryData) {
         return mainQueryData;
       }
 
       followUpQueries.some((query) => {
-        const nextQueryData = mapQueryDataToEntity(query, domain);
+        const nextQueryData = mapQueryToData(query, domain);
 
         if (!nextQueryData) {
           return true;
