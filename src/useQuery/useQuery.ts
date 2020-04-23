@@ -1,4 +1,4 @@
-import { useEffect, useContext, useCallback } from 'react';
+import { useEffect, useContext, useCallback, useMemo } from 'react';
 
 import generateQueryCacheKey from '../utils/generateQueryCacheKey';
 import useUpdatableState from '../utils/useUpdatableState';
@@ -26,7 +26,8 @@ type Options = {
   fetchAll?: boolean;
 };
 
-export const queries: Record<string, { fetch: () => void }> = {};
+export const queries: Record<string, { fetch: () => void; _linkedQueriesFetches: Record<string, () => void> }> = {};
+let uniqueHookIndex = 0;
 
 const registerQuery = (query: { fetch: () => void } | undefined, fetch: () => void) => {
   // A previous query has already been registered, hook up its fetch call as well
@@ -55,6 +56,12 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   variables,
   { ignoreCache = defaultConfig.ignoreCache, fetchAll = defaultConfig.fetchAll } = defaultConfig,
 ) => {
+  const uniqueId = useMemo(() => {
+    const localIndex = uniqueHookIndex;
+    uniqueHookIndex++;
+    return localIndex;
+  }, []);
+
   const queryKey = generateQueryCacheKey(query(variables));
   const [state, setState] = useUpdatableState({
     loading: false,
@@ -159,7 +166,27 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
    * so we don't pollute the global scope, but for now, it doesn't hurt
    */
   useEffect(() => {
-    queries[queryKey] = registerQuery(queries[queryKey], () => fetchMore({ variables }));
+    // Already has a query registered
+    if (queries[queryKey]) {
+      queries[queryKey]._linkedQueriesFetches = {
+        ...queries[queryKey]._linkedQueriesFetches,
+        [uniqueId]: (): void => fetchMore({ variables }),
+      };
+    } else {
+      queries[queryKey] = {
+        fetch: (): void => {
+          Object.values(queries[queryKey]?._linkedQueriesFetches || []).forEach(fetch => fetch());
+        },
+        _linkedQueriesFetches: {
+          ...queries[queryKey]?._linkedQueriesFetches,
+          [uniqueId]: (): void => fetchMore({ variables }),
+        },
+      };
+    }
+
+    return function cleanup() {
+      delete queries[queryKey]?._linkedQueriesFetches?.[uniqueId];
+    };
   }, [queryKey]);
 
   return { ...state, fetchMore };
