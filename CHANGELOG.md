@@ -1,3 +1,9 @@
+## Unreleased
+
+### 🐛 Fixed
+
+* Fixed an issue with the global queries object which caused a memory leak that would duplicate network requests ([ArnaudWeyts](https://github.com/ArnaudWeyts) in [#314](https://github.com/teamleadercrm/react-hooks-api/pull/314))
+
 ## [0.1.0-rc12] - 04-03-2020
 
 ### 🐛 Fixed
