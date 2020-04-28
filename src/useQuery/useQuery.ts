@@ -21,23 +21,31 @@ type CalculatedQuery = {
 
 type Query = (variables?: any) => CalculatedQuery;
 
+type FetchPolicy = 'cache-first' | 'cache-and-network' | 'network-only';
+
 type Options = {
   ignoreCache?: boolean;
   fetchAll?: boolean;
+  fetchPolicy: FetchPolicy;
 };
 
 export const queries: Record<string, { fetch: () => void; _linkedQueriesFetches: Record<string, () => void> }> = {};
 let uniqueHookIndex = 0;
 
-const defaultConfig = {
+const defaultConfig: Options = {
   ignoreCache: false,
   fetchAll: false,
+  fetchPolicy: 'cache-first',
 };
 
 const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   query,
   variables,
-  { ignoreCache = defaultConfig.ignoreCache, fetchAll = defaultConfig.fetchAll } = defaultConfig,
+  {
+    ignoreCache = defaultConfig.ignoreCache,
+    fetchAll = defaultConfig.fetchAll,
+    fetchPolicy = defaultConfig.fetchPolicy,
+  } = defaultConfig,
 ) => {
   const uniqueId = useMemo(() => {
     const localIndex = uniqueHookIndex;
