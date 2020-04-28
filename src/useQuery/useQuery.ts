@@ -26,7 +26,7 @@ type FetchPolicy = 'cache-first' | 'cache-and-network' | 'network-only';
 type Options = {
   ignoreCache?: boolean;
   fetchAll?: boolean;
-  fetchPolicy: FetchPolicy;
+  fetchPolicy?: FetchPolicy;
 };
 
 export const queries: Record<string, { fetch: () => void; _linkedQueriesFetches: Record<string, () => void> }> = {};
@@ -96,8 +96,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
         case 'cache-first':
           {
             // Check for previous results
-            const cacheResult = selectQuery(store.getState(), key);
-            if (cacheResult) {
+            if (key !== queryKey && selectQuery(store.getState(), key)) {
               const data = selectMergedEntities(store.getState(), { key });
               const meta = selectMetaFromQuery(store.getState(), key);
 
@@ -110,8 +109,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
         case 'cache-and-network':
           {
             // Check for previous results
-            const cacheResult = selectQuery(store.getState(), key);
-            if (cacheResult) {
+            if (key !== queryKey && selectQuery(store.getState(), key)) {
               const data = selectMergedEntities(store.getState(), { key });
               const meta = selectMetaFromQuery(store.getState(), key);
               setState({ loading: false, data, meta, error: undefined });
