@@ -1,3 +1,9 @@
+## Unreleased
+
+### Added
+
+* Fetch policy: cache-first, cache-and-network and network-only  ([ArnaudWeyts](https://github.com/ArnaudWeyts) in [#317](https://github.com/teamleadercrm/react-hooks-api/pull/317))
+
 ## [0.1.0-rc13] - 2020-04-13
 
 ### 🐛 Fixed
