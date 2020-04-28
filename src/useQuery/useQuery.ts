@@ -47,6 +47,11 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
     fetchPolicy = defaultConfig.fetchPolicy,
   } = defaultConfig,
 ) => {
+  // Backwards compatibility for the deprecated ignoreCache option
+  if (ignoreCache) {
+    fetchPolicy = 'network-only';
+  }
+
   const uniqueId = useMemo(() => {
     const localIndex = uniqueHookIndex;
     uniqueHookIndex++;
