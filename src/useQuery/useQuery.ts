@@ -59,19 +59,33 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   }, []);
 
   const queryKey = generateQueryCacheKey(query(variables));
-  const [state, setState] = useUpdatableState({
-    loading: false,
-    data: undefined,
-    error: undefined,
-    meta: undefined,
-  });
-
-  const API = useContext(Context);
-
   // Get the redux store
   // this only works because our store is immutable and won't trigger
   // a re-render when it gets updated
   const { store } = useContext(CustomReduxContext);
+
+  const initialState = useMemo(() => {
+    if (fetchPolicy === 'cache-first' || fetchPolicy === 'cache-and-network') {
+      // Check for previous results
+      const cacheResult = selectQuery(store.getState(), queryKey);
+      if (cacheResult) {
+        const data = selectMergedEntities(store.getState(), { key: queryKey });
+        const meta = selectMetaFromQuery(store.getState(), queryKey);
+
+        return { loading: false, data, meta, error: undefined };
+      }
+    }
+
+    return {
+      loading: false,
+      data: undefined,
+      error: undefined,
+      meta: undefined,
+    };
+  }, []);
+  const [state, setState] = useUpdatableState(initialState);
+
+  const API = useContext(Context);
 
   // Helper callback function that does the actual request
   const requestData = useCallback(
