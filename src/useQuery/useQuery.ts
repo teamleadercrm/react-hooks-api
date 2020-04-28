@@ -21,41 +21,37 @@ type CalculatedQuery = {
 
 type Query = (variables?: any) => CalculatedQuery;
 
+type FetchPolicy = 'cache-first' | 'cache-and-network' | 'network-only';
+
 type Options = {
   ignoreCache?: boolean;
   fetchAll?: boolean;
+  fetchPolicy?: FetchPolicy;
 };
 
 export const queries: Record<string, { fetch: () => void; _linkedQueriesFetches: Record<string, () => void> }> = {};
 let uniqueHookIndex = 0;
 
-const registerQuery = (query: { fetch: () => void } | undefined, fetch: () => void) => {
-  // A previous query has already been registered, hook up its fetch call as well
-  // @TODO once every query relies on the same redux state object, this can be removed
-  if (query) {
-    return {
-      fetch: () => {
-        query.fetch();
-        fetch();
-      },
-    };
-  }
-
-  return {
-    fetch,
-  };
-};
-
-const defaultConfig = {
+const defaultConfig: Options = {
   ignoreCache: false,
   fetchAll: false,
+  fetchPolicy: 'cache-first',
 };
 
 const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   query,
   variables,
-  { ignoreCache = defaultConfig.ignoreCache, fetchAll = defaultConfig.fetchAll } = defaultConfig,
+  {
+    ignoreCache = defaultConfig.ignoreCache,
+    fetchAll = defaultConfig.fetchAll,
+    fetchPolicy = defaultConfig.fetchPolicy,
+  } = defaultConfig,
 ) => {
+  // Backwards compatibility for the deprecated ignoreCache option
+  if (ignoreCache) {
+    fetchPolicy = 'network-only';
+  }
+
   const uniqueId = useMemo(() => {
     const localIndex = uniqueHookIndex;
     uniqueHookIndex++;
@@ -63,40 +59,73 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   }, []);
 
   const queryKey = generateQueryCacheKey(query(variables));
-  const [state, setState] = useUpdatableState({
-    loading: false,
-    data: undefined,
-    error: undefined,
-    meta: undefined,
-  });
-
-  const API = useContext(Context);
-
   // Get the redux store
   // this only works because our store is immutable and won't trigger
   // a re-render when it gets updated
   const { store } = useContext(CustomReduxContext);
+
+  const initialState = useMemo(() => {
+    if (fetchPolicy === 'cache-first' || fetchPolicy === 'cache-and-network') {
+      // Check for previous results
+      const cacheResult = selectQuery(store.getState(), queryKey);
+      if (cacheResult) {
+        const data = selectMergedEntities(store.getState(), { key: queryKey });
+        const meta = selectMetaFromQuery(store.getState(), queryKey);
+
+        return { loading: false, data, meta, error: undefined };
+      }
+    }
+
+    return {
+      loading: false,
+      data: undefined,
+      error: undefined,
+      meta: undefined,
+    };
+  }, []);
+  const [state, setState] = useUpdatableState(initialState);
+
+  const API = useContext(Context);
 
   // Helper callback function that does the actual request
   const requestData = useCallback(
     (domain, action, options, updateQuery) => {
       const key = generateQueryCacheKey({ domain, action, options });
       const isEntityAction = action === 'info' || action === 'list';
+      switch (fetchPolicy) {
+        case 'cache-first':
+          {
+            // Check for previous results
+            if (key !== queryKey && selectQuery(store.getState(), key)) {
+              const data = selectMergedEntities(store.getState(), { key });
+              const meta = selectMetaFromQuery(store.getState(), key);
 
-      if (!ignoreCache) {
-        // Check for previous results
-        const cacheResult = selectQuery(store.getState(), key);
-        if (cacheResult) {
-          const data = selectMergedEntities(store.getState(), { key });
-          const meta = selectMetaFromQuery(store.getState(), key);
-
-          setState({ loading: false, data, meta, error: undefined });
-          return;
-        }
+              setState({ loading: false, data, meta, error: undefined });
+              // Early return prevents a request from being sent out
+              return;
+            }
+          }
+          break;
+        case 'cache-and-network':
+          {
+            // Check for previous results
+            if (key !== queryKey && selectQuery(store.getState(), key)) {
+              const data = selectMergedEntities(store.getState(), { key });
+              const meta = selectMetaFromQuery(store.getState(), key);
+              setState({ loading: false, data, meta, error: undefined });
+            } else {
+              store.dispatch(queryRequest({ key }));
+              setState({ loading: true, error: undefined });
+            }
+          }
+          break;
+        case 'network-only':
+          {
+            store.dispatch(queryRequest({ key }));
+            setState({ loading: true, error: undefined });
+          }
+          break;
       }
-
-      store.dispatch(queryRequest({ key }));
-      setState({ loading: true, error: undefined });
 
       // @TODO this promise should be cancellable
       API[domain][action](options, { fetchAll })
@@ -175,7 +204,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
     } else {
       queries[queryKey] = {
         fetch: (): void => {
-          Object.values(queries[queryKey]?._linkedQueriesFetches || []).forEach(fetch => fetch());
+          Object.values(queries[queryKey]?._linkedQueriesFetches || []).forEach((fetch) => fetch());
         },
         _linkedQueriesFetches: {
           ...queries[queryKey]?._linkedQueriesFetches,
