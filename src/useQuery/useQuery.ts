@@ -92,21 +92,42 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
     (domain, action, options, updateQuery) => {
       const key = generateQueryCacheKey({ domain, action, options });
       const isEntityAction = action === 'info' || action === 'list';
+      switch (fetchPolicy) {
+        case 'cache-first':
+          {
+            // Check for previous results
+            const cacheResult = selectQuery(store.getState(), key);
+            if (cacheResult) {
+              const data = selectMergedEntities(store.getState(), { key });
+              const meta = selectMetaFromQuery(store.getState(), key);
 
-      if (!ignoreCache) {
-        // Check for previous results
-        const cacheResult = selectQuery(store.getState(), key);
-        if (cacheResult) {
-          const data = selectMergedEntities(store.getState(), { key });
-          const meta = selectMetaFromQuery(store.getState(), key);
-
-          setState({ loading: false, data, meta, error: undefined });
-          return;
-        }
+              setState({ loading: false, data, meta, error: undefined });
+              // Early return prevents a request from being sent out
+              return;
+            }
+          }
+          break;
+        case 'cache-and-network':
+          {
+            // Check for previous results
+            const cacheResult = selectQuery(store.getState(), key);
+            if (cacheResult) {
+              const data = selectMergedEntities(store.getState(), { key });
+              const meta = selectMetaFromQuery(store.getState(), key);
+              setState({ loading: false, data, meta, error: undefined });
+            } else {
+              store.dispatch(queryRequest({ key }));
+              setState({ loading: true, error: undefined });
+            }
+          }
+          break;
+        case 'network-only':
+          {
+            store.dispatch(queryRequest({ key }));
+            setState({ loading: true, error: undefined });
+          }
+          break;
       }
-
-      store.dispatch(queryRequest({ key }));
-      setState({ loading: true, error: undefined });
 
       // @TODO this promise should be cancellable
       API[domain][action](options, { fetchAll })
