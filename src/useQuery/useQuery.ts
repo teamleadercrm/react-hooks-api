@@ -23,26 +23,22 @@ type CalculatedQuery = {
   action: string;
   options?: any;
 };
-
 type Query = (variables?: any) => CalculatedQuery;
-
+type FetchPolicy = 'cache-first' | 'cache-and-network';
 type Options = {
-  ignoreCache?: boolean;
-  fetchAll?: boolean;
+  fetchPolicy?: FetchPolicy;
 };
-
 export const queries: Record<string, { fetch: () => void }> = {};
-
 export type UpdateQueries = Record<string, (data: { previousData: any; data: any }) => any>;
 
-const defaultConfig = {
-  ignoreCache: false,
+const defaultConfig: Options = {
+  fetchPolicy: 'cache-first',
 };
 
 const useQuery: (query: Query, variables?: any, options?: Options) => any = (
   query,
   variables,
-  { ignoreCache = defaultConfig.ignoreCache }: Options = defaultConfig
+  { fetchPolicy = defaultConfig.fetchPolicy }: Options = defaultConfig
 ) => {
   const key = useMemo(() => generateQueryCacheKey(query(variables)), [variables]);
   const [updateQueries, setUpdateQueries] = useState<UpdateQueries>({});
@@ -74,12 +70,12 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
 
   // Effect only runs when the result query (with variables) has changed
   useEffect(() => {
-    if (!ignoreCache && data) {
+    if (fetchPolicy === 'cache-first' && data) {
       return;
     }
 
     dispatch(queryRequest({ key, APIContext: API }));
-  }, [key, ignoreCache]);
+  }, [key, fetchPolicy]);
 
   // Function supplied to do a refetch with new variables
   // Takes an updateQuery variable that allows you to specify how
@@ -90,7 +86,7 @@ const useQuery: (query: Query, variables?: any, options?: Options) => any = (
       setUpdateQueries({ ...updateQueries, [fetchMoreKey]: updateQuery });
       dispatch(queryRequest({ key: fetchMoreKey, APIContext: API }));
     },
-    [key, ignoreCache, data]
+    [key, data]
   );
 
   const refresh = () => {
