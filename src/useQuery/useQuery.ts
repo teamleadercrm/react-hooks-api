@@ -23,16 +23,12 @@ type CalculatedQuery = {
   action: string;
   options?: any;
 };
-
 type Query = (variables?: any) => CalculatedQuery;
-
 type Options = {
   ignoreCache?: boolean;
   fetchAll?: boolean;
 };
-
 export const queries: Record<string, { fetch: () => void }> = {};
-
 export type UpdateQueries = Record<string, (data: { previousData: any; data: any }) => any>;
 
 const defaultConfig = {
