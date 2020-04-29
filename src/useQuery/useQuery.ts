@@ -26,7 +26,6 @@ type CalculatedQuery = {
 type Query = (variables?: any) => CalculatedQuery;
 type FetchPolicy = 'cache-first' | 'cache-and-network';
 type Options = {
-  fetchAll?: boolean;
   fetchPolicy?: FetchPolicy;
 };
 export const queries: Record<string, { fetch: () => void }> = {};
