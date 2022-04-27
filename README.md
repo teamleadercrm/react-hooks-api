@@ -1,3 +1,7 @@
+# ⚠️ Deprecation notice
+
+This package has been deprecated in favour of using [react-query](https://react-query.tanstack.com/).
+
 # 🎣 @teamleader/react-hooks-api
 
 React hooks for the Teamleader API
